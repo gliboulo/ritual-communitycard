@@ -29,35 +29,35 @@
     </select>
 
     <input id="avatarInput" type="file" accept="image/*">
-
-    <button id="downloadBtn">download card</button>
   </div>
+</div>
 
   <div class="preview-zone">
-    <div class="card" id="card">
-      <div class="card-inner">
-        
-        <div class="avatar-wrapper">
-          <img id="avatarPreview" class="avatar" />
-        </div>
 
-        <div class="info">
-          <p id="pseudoDisplay" class="pseudo"></p>
-          <p id="roleDisplay" class="role-line"></p>
-          <p id="descDisplay" class="desc"></p>
-        </div>
+  <div class="card" id="card">
+    <div class="card-inner">
 
+      <div class="avatar-wrapper">
+        <img id="avatarPreview" class="avatar" />
       </div>
 
-      <div id="rarityPill" class="rarity-pill common">Common</div>
-      <img src="Translucent.svg" class="brand-mark" />
+      <div class="info">
+        <p id="pseudoDisplay" class="pseudo"></p>
+        <p id="roleDisplay" class="role-line"></p>
+        <p id="descDisplay" class="desc"></p>
+      </div>
+
     </div>
-    
-    <div class="download-wrap">
-    <button id="downloadBtn">download card</button>
-    </div>
-    
+
+    <div id="rarityPill" class="rarity-pill common">Common</div>
+    <img src="Translucent.svg" class="brand-mark" />
   </div>
+
+  <!-- ✅ Le bouton SEUL, en dehors de card-inner -->
+  <div class="download-wrap">
+    <button id="downloadBtn">download card</button>
+  </div>
+
 </div>
 
 <script src="https://unpkg.com/html-to-image/dist/html-to-image.min.js"></script>
