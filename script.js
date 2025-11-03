@@ -16,21 +16,22 @@ const descs = [
   "this user will follow you through your API calls"
 ];
 
-const card = document.getElementById("card");
+const card = document.querySelector(".card");
 
-card.addEventListener("mousemove", e => {
+card.addEventListener("mousemove", (e) => {
   const rect = card.getBoundingClientRect();
-  const x = e.clientX - rect.left - rect.width/2;
-  const y = e.clientY - rect.top - rect.height/2;
-  const rotateX = (y / rect.height) * -8;
-  const rotateY = (x / rect.width) * 8;
-  card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+  const x = e.clientX - rect.left - rect.width / 2;
+  const y = e.clientY - rect.top - rect.height / 2;
+
+  const rotateX = (-y / 18);
+  const rotateY = (x / 18);
+
+  card.style.transform = `perspective(900px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) scale(1.03)`;
 });
 
 card.addEventListener("mouseleave", () => {
-  card.style.transform = `rotateX(0deg) rotateY(0deg)`;
+  card.style.transform = "perspective(900px) rotateX(0deg) rotateY(0deg) scale(1)";
 });
-
 
 function getGrade(role) {
   if (["Initiate", "Ritualist Ascendant"].includes(role)) return "Common";
