@@ -238,7 +238,6 @@ input:focus, select:focus {
 .brand-mark {
   position: absolute;
   left: 28px; bottom: 28px;
-  width: 64px;
   opacity: .8;
   mix-blend-mode: screen;
 }
