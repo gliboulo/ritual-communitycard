@@ -25,20 +25,19 @@ function getGrade(role) {
   return "Common";
 }
 
-function update(){
+function update() {
   const pseudo = pseudoInput.value || "Unnamed Ritualist";
-  const role   = roleSelect.value;
-  const grade  = getGrade(role);
-  const desc   = descs[Math.floor(Math.random()*descs.length)];
+  const role = roleSelect.value;
+  const grade = getGrade(role);
+  const randomDesc = descs[Math.floor(Math.random()*descs.length)];
 
   pseudoDisplay.textContent = pseudo;
-  roleDisplay.textContent   = `${role} · ${grade}`;
-  descDisplay.textContent   = desc;
+  roleDisplay.textContent = `${role} · ${grade}`;
+  descDisplay.textContent = randomDesc;
 
-  // pill text + classes
-  rarityPill.textContent = grade.toUpperCase();
-  rarityPill.classList.remove("common","rare","legendary","epic");
-  rarityPill.classList.add(grade.toLowerCase());
+  const pill = document.getElementById("rarityPill");
+  pill.textContent = grade;
+  pill.className = "rarity-pill " + grade.toLowerCase();
 }
 
 pseudoInput.addEventListener("input",  update);
