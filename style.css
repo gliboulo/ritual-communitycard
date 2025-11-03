@@ -26,12 +26,14 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-  opacity: .08;
+  background: radial-gradient(circle at 60% 40%, rgba(12,166,120,.12), transparent 55%),
+              radial-gradient(circle at 20% 80%, rgba(12,166,120,.10), transparent 60%);
   pointer-events: none;
+  mix-blend-mode: lighten;
+  filter: blur(90px);
+  opacity: .55;
 }
 
-/* HEADER + FOOTER */
 .header, .footer {
   position: fixed;
   left: 32px;
@@ -54,6 +56,23 @@ body::after {
 @keyframes pulse {
   0%,100%{ box-shadow:0 0 8px #0CA67880; }
   50%{ box-shadow:0 0 16px #0CA678; }
+}
+
+select {
+  background: #111414;
+  border: 1px solid rgba(255,255,255,.10);
+  border-radius: 12px;
+  padding: 12px 14px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='12' height='8' viewBox='0 0 12 8' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M1 1L6 6L11 1' stroke='%230CA678' stroke-width='2'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  background-size: 14px;
+}
+
+select:focus, select:hover {
+  border-color: #0CA678;
+  background: #141818;
 }
 
 /* === LAYOUT === */
@@ -113,10 +132,6 @@ input:focus, select:focus {
   gap: 32px;
 }
 .download-wrap {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
 
 .card {
   width: min(60vw, 1030px);
@@ -176,16 +191,24 @@ input:focus, select:focus {
 }
 
 /* === DOWNLOAD BTN under card === */
+.download-wrap {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
+
 #downloadBtn {
   padding: 14px 40px;
-  border-radius: 12px;
-  background: rgba(255,255,255,.03);
-  border: 1px solid rgba(255,255,255,.08);
+  font-size: 16px;
+  border-radius: 10px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid rgba(255,255,255,0.12);
   cursor: pointer;
   transition: .25s;
 }
+
 #downloadBtn:hover {
   border-color: #0CA678;
-  box-shadow: 0 0 20px rgba(12,166,120,.25);
   background: rgba(12,166,120,.12);
+  box-shadow: 0 0 22px rgba(12,166,120,.25);
 }
