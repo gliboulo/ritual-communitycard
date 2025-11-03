@@ -55,31 +55,33 @@ async function uploadToCatbox(blob) {
   formData.append("reqtype", "fileupload");
   formData.append("fileToUpload", blob, "card.png");
 
-  const res = await fetch("https://catbox.moe/user/api.php", {
+  const res = await fetch("https://catbox.moe/api.php", {
     method: "POST",
-    body: formData,
+    body: formData
   });
 
-  const text = await res.text();
-  if (!text.startsWith("https")) throw new Error("Upload failed: " + text);
-  return text.trim();
+  const url = await res.text();
+  if (!url.startsWith("https://")) {
+    throw new Error("Catbox upload failed: " + url);
+  }
+  return url.trim();
 }
 
 async function shareToTwitter() {
   const card = document.getElementById("card");
 
-  // Convertit la carte en blob (pas juste DataURL, nécessaire pour upload)
+  // Convert card → blob
   const blob = await htmlToImage.toBlob(card, { pixelRatio: 2 });
 
-  // Upload vers Catbox → on récupère l'URL publique
+  // Upload to Catbox
   const imageUrl = await uploadToCatbox(blob);
 
-  // Texte du tweet (customisable)
+  // Tweet text
   const tweetText = encodeURIComponent(
 "i have taken the pledge.\n\nthe ritual grows stronger.\nhttps://nafyn.github.io/ritual-communitycard/"
-);
+    );
 
-  // Ouvre Twitter avec l’image
+  // Open Twitter
   const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(imageUrl)}`;
   window.open(tweetUrl, "_blank");
 }
