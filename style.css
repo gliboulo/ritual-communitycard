@@ -2,11 +2,6 @@
 
 html, body {
   height: 100%;
-  overflow: hidden; /* désactive scroll */
-}
-
-html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
   background: #0e0f0f;
@@ -50,8 +45,8 @@ button:hover {
 }
 
 .card {
-  width: 720px;
-  padding: 26px 32px;
+  width: 760px;               /* +40 px vs 720 */
+  padding: 28px 34px;         /* un peu plus dense */
   border-radius: 14px;
   background: #0f1111;
   border: 1px solid #144C43;
@@ -61,44 +56,48 @@ button:hover {
   position: relative;
   box-shadow: 0 0 22px #0a0f0f inset, 0 0 40px #00000055;
   transform-style: preserve-3d;
+  backface-visibility: hidden;
   will-change: transform;
-  transition: transform 0.35s cubic-bezier(.21,.54,.32,1.22);
+  transition: transform 0.28s cubic-bezier(.21,.54,.32,1.22),
+              box-shadow 0.28s ease, border-color 0.28s ease;
 }
-
-/* grain/holo stays — do NOT remove your :before / :after */
+.card:hover {
+  box-shadow: 0 0 22px #0a0f0f inset, 0 0 60px #0ca67822;
+  border-color: #176652;
+}
 
 .avatar-wrapper,
 .avatar {
-  width: 92px;
-  height: 92px;
-  border-radius: 10px;
+  width: 108px;              
+  height: 108px;
+  border-radius: 12px;
   object-fit: cover;
   border: 1px solid #144C43;
 }
 
 .info,
-.text { /* your structure may be .info OR .text depending on index.html */
+.text {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 
 .pseudo {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 600;
   color: #E7ECEB;
   margin: 0;
 }
 
 .role-line {
-  font-size: 14px;
+  font-size: 15px;
   color: #0CA678;
   opacity: 0.95;
   margin: 0;
 }
 
 .desc {
-  font-size: 14px;
+  font-size: 15px;
   color: #E7ECEB;
   opacity: 0.7;
   font-style: italic;
@@ -147,9 +146,9 @@ button:hover {
   position: absolute;
   inset: 0;
   background: url("https://i.imgur.com/3QjQZ9T.png");
-  background-size: 200%;
+  background-size: 220%;
   mix-blend-mode: screen;
-  opacity: 0.18;
+  opacity: 0.14;              
   pointer-events: none;
 }
 
