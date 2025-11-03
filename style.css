@@ -131,7 +131,12 @@ input:focus, select:focus {
   align-items: center;
   gap: 32px;
 }
+
 .download-wrap {
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
+}
 
 .card {
   width: min(60vw, 1030px);
