@@ -237,7 +237,8 @@ input:focus, select:focus {
 /* Logo bottom-left */
 .brand-mark {
   position: absolute;
-  left: 28px; bottom: 28px;
+  left: 170px;
+  top: 90px;
   opacity: .8;
   mix-blend-mode: screen;
 }
