@@ -222,7 +222,7 @@ input:focus, select:focus {
   object-fit: cover;
 }
 
-.pseudo { font-size: 56px; font-weight: 600; margin-top: 0px; margin-bottom: .3em; }
+.pseudo { font-size: 56px; font-weight: 600; margin-top: -20px; }
 .role-line { font-size: 30px; color: #0CA678; margin-bottom: .8em; opacity: .85;}
 .desc { font-size: 26px; opacity: .7; font-style: italic; }
 
