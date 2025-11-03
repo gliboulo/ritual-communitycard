@@ -52,7 +52,13 @@ button:hover {
   background: #0e0f0f;
   border: 1px solid #144C43;
   border-radius: 14px;
-  perspective: 1200px;
+  perspective: 900px;
+  transform-style: preserve-3d;
+}
+
+.card-inner {
+  transform-origin: center center;
+  backface-visibility: hidden;
   transform-style: preserve-3d;
 }
 
