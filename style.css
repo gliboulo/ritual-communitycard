@@ -176,7 +176,7 @@ input:focus, select:focus {
 }
 
 .card {
-  width: min(60vw, 1030px);
+  width: min(70vw, 1030px);
   aspect-ratio: 1030/675;
   border-radius: 30px;
   background: #0f1111;
