@@ -30,22 +30,25 @@
   <button id="downloadBtn">download card</button>
 </div>
 
-<div id="card" class="card">
+<div class="card-tilt">
+  <div id="card" class="card">
     <div class="card-inner">
+
+      <div class="avatar-wrapper">
+        <img id="avatarPreview" class="avatar">
+      </div>
+
+      <div class="info">
+        <p id="pseudoDisplay" class="pseudo"></p>
+        <p id="roleDisplay" class="role-line"></p>
+        <p id="descDisplay" class="desc"></p>
+      </div>
+
       <div class="rarity-pill" id="rarityPill"></div>
-        <div class="avatar-wrapper">
-            <img id="avatarPreview" class="avatar">
-            <img src="ritual_mark.png" class="rc-mark">
-        </div>
-
-        <div class="info">
-            <p id="pseudoDisplay" class="pseudo"></p>
-            <p id="roleDisplay" class="role-line"></p>
-            <p id="descDisplay" class="desc"></p>
-        </div>
+      <img src="ritual_mark.png" class="rc-mark"/>
     </div>
+  </div>
 </div>
-
 
 <script src="https://unpkg.com/html-to-image/dist/html-to-image.min.js"></script>
 <script src="script.js"></script>
