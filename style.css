@@ -4,6 +4,7 @@
   50%      { box-shadow: 0 0 10px #0CA678, 0 0 22px #0CA67888; }
 }
 
+/* === BASE === */
 html, body {
   height: 100%;
   margin: 0;
@@ -18,7 +19,7 @@ html, body {
   overflow-x: hidden;
 }
 
-body:before {
+body::before {
   content: "";
   position: fixed;
   inset: 0;
@@ -27,7 +28,7 @@ body:before {
   pointer-events: none;
 }
 
-/* Header / Footer */
+/* === HEADER / FOOTER === */
 .header {
   position: absolute;
   top: 22px;
@@ -44,7 +45,6 @@ body:before {
   background: #0CA678;
   border-radius: 50%;
   margin-right: 10px;
-  box-shadow: 0 0 8px #0CA678;
   animation: pulse-dot 2.8s ease-in-out infinite;
 }
 
@@ -65,13 +65,13 @@ body:before {
   text-shadow: 0 0 6px #0CA67899;
 }
 
-/* === LAYOUT (form left / card right) === */
+/* === LAYOUT === */
 .layout {
   display: grid;
-  grid-template-columns: clamp(220px, 22vw, 300px) 1fr;
+  grid-template-columns: clamp(230px, 22vw, 320px) 1fr;
   gap: clamp(40px, 6vw, 90px);
   width: min(95vw, 1600px);
-  margin: 12vh auto 0;
+  margin-top: 12vh;
   padding: 0 clamp(20px, 3vw, 60px);
   align-items: center;
 }
@@ -98,7 +98,7 @@ button:hover {
   border-color: #0CA678;
 }
 
-/* === CARD — ratio exact === */
+/* === CARD === */
 .preview-zone {
   display: flex;
   justify-content: center;
@@ -109,31 +109,40 @@ button:hover {
   position: relative;
   width: min(60vw, 1030px);
   aspect-ratio: 1030 / 675;
-  border-radius: 18px;
-  background: #0f1111;
-  border: 1px solid rgba(12,166,120,.25);
-  box-shadow:
-    inset 0 0 0 1px rgba(12,166,120,.10),
-    0 22px 80px rgba(0,0,0,.55);
+  border-radius: 22px;
+  background: #0e1010;
+  border: 1px solid rgba(255,255,255,0.05);
   overflow: hidden;
+  box-shadow:
+    0 12px 40px rgba(0,0,0,0.55),
+    0 0 40px rgba(0,0,0,0.4) inset;
   transition: border-color .25s ease, box-shadow .25s ease;
 }
 
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  border: 1px solid rgba(255,255,255,0.04);
+  pointer-events: none;
+}
+
 .card:hover {
-  border-color: rgba(12,166,120,.35);
+  border-color: rgba(255,255,255,0.08);
   box-shadow:
-    inset 0 0 0 1px rgba(12,166,120,.15),
-    0 22px 90px rgba(0,0,0,.6);
+    0 16px 50px rgba(0,0,0,0.6),
+    0 0 40px rgba(0,0,0,0.45) inset;
 }
 
 /* === INNER === */
 .card-inner {
   width: 100%;
   height: 100%;
-  padding: clamp(24px, 3.6vw, 48px);
+  padding: clamp(32px, 3.8vw, 58px);
   display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: clamp(24px, 3.6vw, 60px);
+  grid-template-columns: 1.15fr 2.2fr;
+  gap: clamp(32px, 4vw, 72px);
   align-items: center;
 }
 
@@ -141,9 +150,12 @@ button:hover {
 .avatar-wrapper {
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 14px;
-  border: 1px solid rgba(12,166,120,.28);
-  background: #0b0e0e;
+  border-radius: 16px;
+  background: #0b0d0d;
+  border: 1px solid rgba(255,255,255,0.06);
+  box-shadow:
+    inset 0 0 28px rgba(18,184,134,0.10),
+    0 0 12px rgba(18,184,134,0.08);
   display: flex;
   justify-content: center;
   align-items: center;
@@ -153,7 +165,7 @@ button:hover {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
 /* === TEXT === */
@@ -161,22 +173,25 @@ button:hover {
   display: flex;
   flex-direction: column;
 }
+
 .pseudo {
-  font-size: clamp(22px, 3.6vw, 42px);
-  font-weight: 600;
-  margin-bottom: .3em;
+  font-weight: 500;
+  font-size: clamp(26px, 3.8vw, 46px);
+  color: #ecfdfc;
+  margin-bottom: .35em;
 }
 
 .role-line {
-  font-size: clamp(14px, 2vw, 20px);
-  color: #0CA678;
-  margin-bottom: .9em;
+  font-size: clamp(14px, 1.8vw, 20px);
+  color: rgba(18,184,134,0.85);
+  margin-bottom: 1.1em;
 }
 
 .desc {
-  font-size: clamp(13px, 1.8vw, 18px);
-  opacity: .85;
+  font-size: clamp(14px, 1.6vw, 18px);
+  font-weight: 300;
   font-style: italic;
+  color: rgba(236,253,250,0.72);
 }
 
 /* === RARITY === */
@@ -184,22 +199,24 @@ button:hover {
   position: absolute;
   top: clamp(12px, 2vw, 28px);
   right: clamp(12px, 2vw, 28px);
-  padding: .45em 1.2em;
+  padding: .45em 1.25em;
   border-radius: 999px;
   font-size: clamp(10px, 1.4vw, 16px);
-  border: 1px solid rgba(12,166,120,.35);
-  background: rgba(12,166,120,.12);
-  color: #0CA678;
+  background: rgba(18,184,134,0.14);
+  border: 1px solid rgba(18,184,134,0.22);
+  color: rgba(18,184,134,0.9);
+  font-weight: 400;
 }
 
-/* === BRAND (bottom left) === */
+/* === BRAND LOGO (bottom-left) === */
 .brand-mark {
   position: absolute;
-  left: clamp(12px, 2vw, 28px);
-  bottom: clamp(12px, 2vw, 28px);
-  width: clamp(20px, 2.6vw, 34px);
-  opacity: .75;
-  filter: drop-shadow(0 0 4px rgba(12,166,120,.25));
+  left: clamp(14px, 2vw, 32px);
+  bottom: clamp(14px, 2vw, 32px);
+  width: clamp(20px, 2.4vw, 34px);
+  opacity: .55;
+  mix-blend-mode: screen;
+  filter: drop-shadow(0 0 6px rgba(18,184,134,0.20));
   pointer-events: none;
   user-select: none;
 }
