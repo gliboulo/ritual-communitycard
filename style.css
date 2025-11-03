@@ -227,7 +227,7 @@ input:focus, select:focus {
 .desc { font-size: 26px; opacity: .7; font-style: italic; }
 
 .rarity-pill {
-  font-size: 16px;
+  font-size: 22px;
   position: absolute;
   top: 50px; right: 48px;
   padding: 16px 30px;
