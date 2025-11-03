@@ -193,7 +193,7 @@ input:focus, select:focus {
 
 .rarity-pill {
   position: absolute;
-  top: 26px; right: 28px;
+  top: 46px; right: 38px;
   padding: 6px 20px;
   border-radius: 999px;
   border: 1px solid rgba(12,166,120,.35);
