@@ -246,3 +246,56 @@ input[type="file"]::-webkit-file-upload-button:hover {
 #downloadBtn:active {
   transform: scale(.98);
 }
+
+/* === HALO FIN, BLOOM SUBTIL, STYLE RITUAL CONTRIBUTIONS === */
+.card {
+  position: relative;
+  isolation: isolate; /* important pour que le halo reste contenu */
+}
+
+/* halo spectral vivant + respiration lente */
+.card::before {
+  content: "";
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg,
+    rgba(12,166,120,0.22),
+    rgba(12,166,120,0.05),
+    rgba(12,166,120,0.16),
+    rgba(12,166,120,0.28),
+    rgba(12,166,120,0.22)
+  );
+  filter: blur(32px);
+  opacity: 0.22;
+  pointer-events: none;
+  z-index: -1;
+  animation: ritual-halo 7.5s ease-in-out infinite;
+  transition: opacity .45s ease, filter .45s ease;
+}
+
+/* grain + glow très fin */
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  background-size: 100%;
+  opacity: 0.06;
+  mix-blend-mode: soft-light;
+}
+
+/* respiration très douce */
+@keyframes ritual-halo {
+  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.20; }
+  50%      { transform: rotate(85deg) scale(1.04); opacity: 0.34; }
+}
+
+/* hover = léger bloom, pas plus */
+.card:hover::before {
+  filter: blur(48px);
+  opacity: 0.38;
+}
