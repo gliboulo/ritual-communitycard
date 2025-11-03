@@ -1,0 +1,94 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+
+body {
+  background: #0e0f0f;
+  font-family: "Inter", sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px;
+  color: #E7ECEB;
+}
+
+/* grain */
+body:before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity: 0.08;
+  pointer-events: none;
+}
+
+.form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 40px;
+}
+
+input, select, button {
+  background: #111414;
+  border: 1px solid #0CA67855;
+  color: #E7ECEB;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+button {
+  cursor: pointer;
+}
+button:hover {
+  border-color: #0CA678;
+}
+
+.card {
+  width: 880px;
+  height: 540px;
+  background: #111414dd;
+  border: 1px solid #0CA67855;
+  border-radius: 18px;
+  display: flex;
+  padding: 40px;
+  gap: 40px;
+  position: relative;
+}
+
+.avatar-wrapper {
+  width: 200px;
+  height: 200px;
+  border-radius: 14px;
+  overflow: hidden;
+  border: 1px solid #0CA67833;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  max-width: 550px;
+}
+
+.pseudo {
+  font-size: 38px;
+  font-weight: 600;
+  margin-bottom: 10px;
+}
+
+.role-line {
+  font-size: 18px;
+  color: #0CA678;
+  margin-bottom: 22px;
+}
+
+.desc {
+  font-size: 18px;
+  opacity: 0.8;
+  line-height: 1.4;
+  font-style: italic;
+}
