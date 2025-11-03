@@ -6,6 +6,7 @@ const pseudoDisplay = document.getElementById("pseudoDisplay");
 const roleDisplay = document.getElementById("roleDisplay");
 const descDisplay = document.getElementById("descDisplay");
 const avatarPreview = document.getElementById("avatarPreview");
+const rarityPill = document.getElementById("rarityPill"); // ✅ on récupère le pill
 
 const descs = [
   "this user lives in the Infernet",
@@ -16,8 +17,8 @@ const descs = [
   "this user will follow you through your API calls"
 ];
 
+// -------------------- TILT --------------------
 const card = document.querySelector(".card-inner");
-
 let curX = 0, curY = 0, tgtX = 0, tgtY = 0, rafId;
 
 function animateTilt(){
@@ -26,10 +27,13 @@ function animateTilt(){
   card.style.transform = `translateZ(35px) rotateX(${curY}deg) rotateY(${curX}deg) scale(1.04)`;
   if(Math.abs(tgtX - curX) > 0.01 || Math.abs(tgtY - curY) > 0.01){
     rafId = requestAnimationFrame(animateTilt);
-  }else{ cancelAnimationFrame(rafId); rafId = null; }
+  } else {
+    cancelAnimationFrame(rafId);
+    rafId = null;
+  }
 }
 
-document.querySelector(".card").addEventListener("mousemove", e=>{
+document.querySelector(".card").addEventListener("mousemove", e => {
   const r = e.currentTarget.getBoundingClientRect();
   const x = e.clientX - (r.left + r.width/2);
   const y = e.clientY - (r.top + r.height/2);
@@ -39,11 +43,12 @@ document.querySelector(".card").addEventListener("mousemove", e=>{
   if(!rafId) rafId = requestAnimationFrame(animateTilt);
 });
 
-document.querySelector(".card").addEventListener("mouseleave", ()=>{
+document.querySelector(".card").addEventListener("mouseleave", () => {
   tgtX = 0; tgtY = 0;
   if(!rafId) rafId = requestAnimationFrame(animateTilt);
 });
 
+// -------------------- DISPLAY UPDATE --------------------
 function getGrade(role) {
   if (["Initiate", "Ritualist Ascendant"].includes(role)) return "Common";
   if (["Ritty Bitty", "Ritty"].includes(role)) return "Rare";
@@ -60,6 +65,9 @@ function update() {
   pseudoDisplay.textContent = pseudo;
   roleDisplay.textContent = `${role} · ${grade}`;
   descDisplay.textContent = randomDesc;
+
+  // ✅ c’est ICI qu’on met à jour le pill
+  rarityPill.textContent = grade;
 }
 
 pseudoInput.addEventListener("input", update);
@@ -71,8 +79,7 @@ avatarInput.addEventListener("change", () => {
   avatarPreview.src = URL.createObjectURL(file);
 });
 
-document.getElementById("rarityPill").textContent = grade;
-
+// -------------------- DOWNLOAD --------------------
 document.getElementById("downloadBtn").addEventListener("click", () => {
   const card = document.getElementById("card");
   htmlToImage.toPng(card).then((dataUrl) => {
