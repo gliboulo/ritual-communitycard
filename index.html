@@ -30,29 +30,23 @@
   <button id="downloadBtn">download card</button>
 </div>
 
-<div id="card" class="card">
+<div class="card" id="card">
   <div class="card-inner">
+    
     <div class="avatar-wrapper">
-      <img id="avatarPreview" class="avatar" alt="">
+      <img id="avatarPreview" class="avatar" />
     </div>
 
     <div class="info">
-      <p id="pseudoDisplay" class="pseudo">Unnamed Ritualist</p>
-
-      <p class="role-line">
-        <span id="roleDisplay">Initiate · Common</span>
-      </p>
-
-      <p class="desc" id="descDisplay">
-        this user lives in the Infernet
-      </p>
+      <p id="pseudoDisplay" class="pseudo"></p>
+      <p id="roleDisplay" class="role-line"></p>
+      <p id="descDisplay" class="desc"></p>
     </div>
-
-    <span id="rarityPill" class="rarity-pill">COMMON</span>
-    <img class="brand-mark" src="data:image/gif;base64,R0lGODlhAQABAAAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" alt="">
   </div>
-</div>
 
+  <div id="rarityPill" class="rarity-pill common">Common</div>
+  <img src="brand.png" class="brand-mark" />
+</div>
 
 <script src="https://unpkg.com/html-to-image/dist/html-to-image.min.js"></script>
 <script src="script.js"></script>
