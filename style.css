@@ -93,51 +93,55 @@ body::after {
   gap: 18px;
 }
 
-input, select {
-  width: 100%;
-  background: #111414;
-  border: 1px solid rgba(255,255,255,.08);
-  padding: 12px 14px;
-  border-radius: 10px;
+.controls input,
+.controls select {
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.06);
+  padding: 12px 16px;
+  border-radius: 12px;
+  font-size: 15px;
   color: #E7ECEB;
-  transition: border .2s ease, background .2s ease;
+  transition: border .25s, background .25s, box-shadow .25s;
 }
 
-input:hover, select:hover {
-  border-color: rgba(255,255,255,.16);
+.controls input:hover,
+.controls select:hover {
+  border-color: rgba(12,166,120,0.35);
 }
 
-input:focus, select:focus {
+.controls input:focus,
+.controls select:focus {
+  background: rgba(12,166,120,0.08);
+  border-color: rgba(12,166,120,0.60);
+  box-shadow: 0 0 14px rgba(12,166,120,0.25);
   outline: none;
-  border-color: #0CA678aa;
-  background: #131717;
 }
 
 input[type="file"]::-webkit-file-upload-button {
-  background: #111414;
-  border: 1px solid rgba(255,255,255,.10);
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: #E7ECEB;
+  background: transparent;
+  border: none;
+  padding: 0;
+  margin-right: 12px;
+  color: #0CA678;
   cursor: pointer;
-}
-input[type="file"]::-webkit-file-upload-button:hover {
-  border-color: #0CA678;
 }
 
 #downloadBtn {
   margin-top: 12px;
-  background: transparent;
-  border: 1px solid rgba(255,255,255,.18);
-  padding: 12px;
+  padding: 14px 0;
+  width: 100%;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid rgba(255,255,255,0.10);
   border-radius: 12px;
-  cursor: pointer;
-  transition: .2s;
+  font-size: 15px;
   text-align: center;
+  transition: .25s;
 }
+
 #downloadBtn:hover {
-  border-color: #0CA678;
-  background: rgba(12,166,120,.10);
+  background: rgba(12,166,120,0.10);
+  border-color: rgba(12,166,120,0.50);
+  box-shadow: 0 0 18px rgba(12,166,120,0.35);
 }
 
 .preview-zone {
