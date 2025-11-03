@@ -6,16 +6,11 @@
 
 /* === BASE === */
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
   background: #0e0f0f;
-  font-family: "Inter", sans-serif;
   color: #E7ECEB;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  font-family: "Inter", sans-serif;
   overflow-x: hidden;
 }
 
@@ -29,94 +24,123 @@ body::before {
 }
 
 /* === HEADER / FOOTER === */
-.header {
-  position: absolute;
-  top: 22px;
+.header, .footer {
+  position: fixed;
   left: 32px;
   display: flex;
   align-items: center;
+  pointer-events: none;
+}
+.header {
+  top: 22px;
   font-size: 18px;
   font-weight: 500;
 }
+.footer {
+  bottom: 22px;
+  font-size: 14px;
+  opacity: .75;
+}
 
 .header .dot {
-  width: 9px;
-  height: 9px;
+  width: 9px; height: 9px;
   background: #0CA678;
   border-radius: 50%;
   margin-right: 10px;
   animation: pulse-dot 2.8s ease-in-out infinite;
 }
 
-.footer {
-  position: absolute;
-  bottom: 22px;
-  left: 32px;
-  font-size: 14px;
-  opacity: 0.75;
-}
-
 .footer a {
+  pointer-events: auto;
   color: #0CA678;
   text-decoration: none;
 }
-.footer a:hover {
-  opacity: 1;
-  text-shadow: 0 0 6px #0CA67899;
-}
+.footer a:hover { opacity: 1; }
 
-/* === LAYOUT === */
+/* === PAGE LAYOUT === */
 .layout {
+  width: min(92vw, 1600px);
+  margin: 120px auto;
   display: grid;
-  grid-template-columns: clamp(230px, 22vw, 320px) 1fr;
-  gap: clamp(40px, 6vw, 90px);
-  width: min(95vw, 1600px);
-  margin-top: 12vh;
-  padding: 0 clamp(20px, 3vw, 60px);
-  align-items: center;
+  grid-template-columns: 300px 1fr;
+  gap: 60px;
+  align-items: start;
 }
 
+/* === CONTROLS (LEFT) === */
 .controls {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
 
-input, select, button {
+input, select {
+  width: 100%;
   background: #111414;
-  border: 1px solid #0CA67855;
+  border: 1px solid rgba(255,255,255,.08);
+  padding: 12px 14px;
+  border-radius: 10px;
   color: #E7ECEB;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-size: 14px;
+  transition: border .2s ease, background .2s ease;
 }
 
-button {
+input:hover, select:hover {
+  border-color: rgba(255,255,255,.16);
+}
+
+input:focus, select:focus {
+  outline: none;
+  border-color: #0CA678aa;
+  background: #131717;
+}
+
+/* File input custom */
+input[type="file"]::-webkit-file-upload-button {
+  background: #111414;
+  border: 1px solid rgba(255,255,255,.10);
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: #E7ECEB;
   cursor: pointer;
 }
-button:hover {
+input[type="file"]::-webkit-file-upload-button:hover {
   border-color: #0CA678;
 }
 
-/* === CARD === */
+/* Download button */
+#downloadBtn {
+  margin-top: 12px;
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.18);
+  padding: 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: .2s;
+  text-align: center;
+}
+#downloadBtn:hover {
+  border-color: #0CA678;
+  background: rgba(12,166,120,.10);
+}
+
+/* === CARD AREA === */
 .preview-zone {
   display: flex;
   justify-content: center;
-  align-items: center;
 }
 
+/* Your exact card ratio + refined borders like your screenshot */
 .card {
-  position: relative;
   width: min(60vw, 1030px);
   aspect-ratio: 1030 / 675;
-  border-radius: 22px;
-  background: #0e1010;
-  border: 1px solid rgba(255,255,255,0.05);
-  overflow: hidden;
+  border-radius: 26px;
+  background: #0f1111;
+  border: 1px solid rgba(255,255,255,.05);
   box-shadow:
-    0 12px 40px rgba(0,0,0,0.55),
-    0 0 40px rgba(0,0,0,0.4) inset;
-  transition: border-color .25s ease, box-shadow .25s ease;
+    0 14px 44px rgba(0,0,0,.50),
+    0 0 32px rgba(0,0,0,.35) inset;
+  position: relative;
+  overflow: hidden;
 }
 
 .card::after {
@@ -124,99 +148,73 @@ button:hover {
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  border: 1px solid rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,.06);
   pointer-events: none;
 }
 
-.card:hover {
-  border-color: rgba(255,255,255,0.08);
-  box-shadow:
-    0 16px 50px rgba(0,0,0,0.6),
-    0 0 40px rgba(0,0,0,0.45) inset;
-}
-
-/* === INNER === */
+/* Inner layout */
 .card-inner {
-  width: 100%;
   height: 100%;
-  padding: clamp(32px, 3.8vw, 58px);
+  padding: 48px 54px;
   display: grid;
-  grid-template-columns: 1.15fr 2.2fr;
-  gap: clamp(32px, 4vw, 72px);
+  grid-template-columns: 1.05fr 2fr;
+  gap: 48px;
   align-items: center;
 }
 
-/* === AVATAR === */
+/* Avatar */
 .avatar-wrapper {
   width: 100%;
   aspect-ratio: 1;
   border-radius: 16px;
+  border: 1px solid rgba(255,255,255,.08);
   background: #0b0d0d;
-  border: 1px solid rgba(255,255,255,0.06);
-  box-shadow:
-    inset 0 0 28px rgba(18,184,134,0.10),
-    0 0 12px rgba(18,184,134,0.08);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  box-shadow: inset 0 0 22px rgba(18,184,134,0.12);
+  overflow: hidden;
 }
-
 .avatar {
-  width: 100%;
-  height: 100%;
+  width: 100%; height: 100%;
   object-fit: cover;
-  border-radius: 14px;
+  border-radius: inherit;
 }
 
-/* === TEXT === */
-.info {
-  display: flex;
-  flex-direction: column;
-}
-
+/* Text */
 .pseudo {
+  font-size: 40px;
   font-weight: 500;
-  font-size: clamp(26px, 3.8vw, 46px);
-  color: #ecfdfc;
-  margin-bottom: .35em;
+  margin: 0 0 8px;
 }
-
 .role-line {
-  font-size: clamp(14px, 1.8vw, 20px);
-  color: rgba(18,184,134,0.85);
-  margin-bottom: 1.1em;
+  font-size: 20px;
+  color: #0CA678;
+  margin-bottom: 14px;
 }
-
 .desc {
-  font-size: clamp(14px, 1.6vw, 18px);
-  font-weight: 300;
   font-style: italic;
-  color: rgba(236,253,250,0.72);
+  opacity: .85;
+  max-width: 90%;
 }
 
-/* === RARITY === */
+/* Rarity pill */
 .rarity-pill {
   position: absolute;
-  top: clamp(12px, 2vw, 28px);
-  right: clamp(12px, 2vw, 28px);
-  padding: .45em 1.25em;
+  top: 28px;
+  right: 32px;
+  padding: 6px 18px;
   border-radius: 999px;
-  font-size: clamp(10px, 1.4vw, 16px);
-  background: rgba(18,184,134,0.14);
-  border: 1px solid rgba(18,184,134,0.22);
-  color: rgba(18,184,134,0.9);
-  font-weight: 400;
+  border: 1px solid rgba(12,166,120,.30);
+  background: rgba(12,166,120,.10);
+  color: #0CA678;
+  font-size: 15px;
 }
 
-/* === BRAND LOGO (bottom-left) === */
+/* Bottom-left brand logo */
 .brand-mark {
   position: absolute;
-  left: clamp(14px, 2vw, 32px);
-  bottom: clamp(14px, 2vw, 32px);
-  width: clamp(20px, 2.4vw, 34px);
-  opacity: .55;
-  mix-blend-mode: screen;
-  filter: drop-shadow(0 0 6px rgba(18,184,134,0.20));
+  left: 32px;
+  bottom: 28px;
+  width: 34px;
+  opacity: .65;
   pointer-events: none;
-  user-select: none;
+  mix-blend-mode: screen;
 }
