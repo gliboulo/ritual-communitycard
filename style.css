@@ -3,15 +3,18 @@
   0%, 100% { box-shadow: 0 0 6px #0CA678, 0 0 14px #0CA67855; }
   50%      { box-shadow: 0 0 10px #0CA678, 0 0 22px #0CA67888; }
 }
-:root { --card-w: 820px; }
 
 html, body {
+  height: 100%;
   margin: 0;
   padding: 0;
   background: #0e0f0f;
   font-family: "Inter", sans-serif;
   color: #E7ECEB;
-  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   overflow-x: hidden;
 }
 
@@ -24,6 +27,7 @@ body:before {
   pointer-events: none;
 }
 
+/* Header / Footer */
 .header {
   position: absolute;
   top: 22px;
@@ -32,8 +36,6 @@ body:before {
   align-items: center;
   font-size: 18px;
   font-weight: 500;
-  pointer-events: none;
-  color: #E7ECEB;
 }
 
 .header .dot {
@@ -45,125 +47,6 @@ body:before {
   box-shadow: 0 0 8px #0CA678;
   animation: pulse-dot 2.8s ease-in-out infinite;
 }
-
-.form {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-input, select, button {
-  background: #111414;
-  border: 1px solid #0CA67855;
-  color: #E7ECEB;
-  padding: 8px 14px;
-  border-radius: 8px;
-}
-
-button {
-  cursor: pointer;
-}
-button:hover {
-  border-color: #0CA678;
-}
-
-.card {
-  position: relative;
-  width: min(60vw, 1030px);
-  aspect-ratio: 1030 / 675; /* <--- ratio exact, responsive, clean */
-  border-radius: 18px;
-  background: #0f1111;
-  border: 1px solid rgba(12,166,120,.25);
-  box-shadow:
-    inset 0 0 0 1px rgba(12,166,120,.10),
-    0 22px 80px rgba(0,0,0,.55);
-  overflow: hidden;
-}
-
-.card-inner {
-  width: 100%;
-  height: 100%;
-  padding: clamp(24px, 3.6vw, 48px);
-  display: grid;
-  grid-template-columns: 1fr 2fr;
-  gap: clamp(24px, 3.6vw, 60px);
-  align-items: center;
-}
-
-.card:hover{
-  border-color: rgba(12,166,120,.42);
-  box-shadow:
-    inset 0 0 0 1px rgba(12,166,120,.18),
-    0 22px 70px rgba(0,0,0,.6);
-}
-
-.avatar-wrapper {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 14px;
-  border: 1px solid rgba(12,166,120,.28);
-  background: #0b0e0e;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.avatar {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.pseudo {
-  font-size: clamp(22px, 3.6vw, 42px);
-  font-weight: 600;
-  margin-bottom: .3em;
-}
-
-.role-line {
-  font-size: clamp(14px, 2vw, 20px);
-  color: #0CA678;
-  margin-bottom: .9em; /* espace ajouté */
-}
-
-.desc {
-  font-size: clamp(13px, 1.8vw, 18px);
-  opacity: .85;
-  font-style: italic;
-}
-
-.rarity-pill {
-  position: absolute;
-  top: clamp(12px, 2vw, 28px);
-  right: clamp(12px, 2vw, 28px);
-  padding: .45em 1.2em;
-  border-radius: 999px;
-  font-size: clamp(10px, 1.4vw, 16px);
-  border: 1px solid rgba(12,166,120,.35);
-  background: rgba(12,166,120,.12);
-}
-
-/* variations par rareté (optionnel pour teinter) */
-.rarity-pill.common  { color:#0CA678; border-color:rgba(12,166,120,.35); background:rgba(12,166,120,.08);}
-.rarity-pill.rare    { color:#5bb6ff; border-color:rgba(91,182,255,.35); background:rgba(91,182,255,.10);}
-.rarity-pill.legendary{color:#ffd166; border-color:rgba(255,209,102,.35); background:rgba(255,209,102,.10);}
-.rarity-pill.epic    { color:#c084fc; border-color:rgba(192,132,252,.35); background:rgba(192,132,252,.10);}
-
-/* === PETIT LOGO (bottom-right) === */
-.brand-mark {
-  position: absolute;
-  left: clamp(12px, 2vw, 28px);   /* ← au lieu de right */
-  bottom: clamp(12px, 2vw, 28px);
-  width: clamp(18px, 2.4vw, 28px);
-  opacity: .75;
-  filter: drop-shadow(0 0 4px rgba(12,166,120,.25));
-  pointer-events: none;
-  user-select: none;
-}
-
-.card::before,
-.card::after{ content:none !important; }
 
 .footer {
   position: absolute;
@@ -182,12 +65,13 @@ button:hover {
   text-shadow: 0 0 6px #0CA67899;
 }
 
+/* === LAYOUT (form left / card right) === */
 .layout {
   display: grid;
   grid-template-columns: clamp(220px, 22vw, 300px) 1fr;
   gap: clamp(40px, 6vw, 90px);
   width: min(95vw, 1600px);
-  margin: 10vh auto 0;
+  margin: 12vh auto 0;
   padding: 0 clamp(20px, 3vw, 60px);
   align-items: center;
 }
@@ -198,10 +82,124 @@ button:hover {
   gap: 18px;
 }
 
-/* colonne droite */
+input, select, button {
+  background: #111414;
+  border: 1px solid #0CA67855;
+  color: #E7ECEB;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+button {
+  cursor: pointer;
+}
+button:hover {
+  border-color: #0CA678;
+}
+
+/* === CARD — ratio exact === */
 .preview-zone {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
+.card {
+  position: relative;
+  width: min(60vw, 1030px);
+  aspect-ratio: 1030 / 675;
+  border-radius: 18px;
+  background: #0f1111;
+  border: 1px solid rgba(12,166,120,.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(12,166,120,.10),
+    0 22px 80px rgba(0,0,0,.55);
+  overflow: hidden;
+  transition: border-color .25s ease, box-shadow .25s ease;
+}
+
+.card:hover {
+  border-color: rgba(12,166,120,.35);
+  box-shadow:
+    inset 0 0 0 1px rgba(12,166,120,.15),
+    0 22px 90px rgba(0,0,0,.6);
+}
+
+/* === INNER === */
+.card-inner {
+  width: 100%;
+  height: 100%;
+  padding: clamp(24px, 3.6vw, 48px);
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: clamp(24px, 3.6vw, 60px);
+  align-items: center;
+}
+
+/* === AVATAR === */
+.avatar-wrapper {
+  width: 100%;
+  aspect-ratio: 1;
+  border-radius: 14px;
+  border: 1px solid rgba(12,166,120,.28);
+  background: #0b0e0e;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+/* === TEXT === */
+.info {
+  display: flex;
+  flex-direction: column;
+}
+.pseudo {
+  font-size: clamp(22px, 3.6vw, 42px);
+  font-weight: 600;
+  margin-bottom: .3em;
+}
+
+.role-line {
+  font-size: clamp(14px, 2vw, 20px);
+  color: #0CA678;
+  margin-bottom: .9em;
+}
+
+.desc {
+  font-size: clamp(13px, 1.8vw, 18px);
+  opacity: .85;
+  font-style: italic;
+}
+
+/* === RARITY === */
+.rarity-pill {
+  position: absolute;
+  top: clamp(12px, 2vw, 28px);
+  right: clamp(12px, 2vw, 28px);
+  padding: .45em 1.2em;
+  border-radius: 999px;
+  font-size: clamp(10px, 1.4vw, 16px);
+  border: 1px solid rgba(12,166,120,.35);
+  background: rgba(12,166,120,.12);
+  color: #0CA678;
+}
+
+/* === BRAND (bottom left) === */
+.brand-mark {
+  position: absolute;
+  left: clamp(12px, 2vw, 28px);
+  bottom: clamp(12px, 2vw, 28px);
+  width: clamp(20px, 2.6vw, 34px);
+  opacity: .75;
+  filter: drop-shadow(0 0 4px rgba(12,166,120,.25));
+  pointer-events: none;
+  user-select: none;
+}
