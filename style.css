@@ -46,31 +46,28 @@ button:hover {
 }
 
 .card {
-  width: 780px;
-  height: 230px;
-  padding: 28px 34px;
-  border-radius: 16px;
-  background: #0f1111;
-  border: 1px solid rgba(12,166,120,.28);
-  box-shadow: 0 0 0 1px rgba(12,166,120,.10) inset,
-              0 12px 40px #0008 inset;
   position: relative;
-  overflow: hidden;
-  perspective: 1200px;               /* <- ici la perspective */
+  width: 730px;
+  height: 250px;
+  background: #0e0f0f;
+  border: 1px solid #144C43;
+  border-radius: 14px;
+  perspective: 1200px;
+  transform-style: preserve-3d;
 }
 
 .card-inner {
   width: 100%;
   height: 100%;
+  padding: 28px 36px;
   display: flex;
   align-items: center;
-  gap: 26px;
-  border-radius: inherit;
+  gap: 32px;
   transform-style: preserve-3d;
-  backface-visibility: hidden;
-  transition: transform 0.3s ease-out;
   will-change: transform;
+  transition: transform 0.25s ease-out;
 }
+
 .card:hover{
   border-color: rgba(12,166,120,.38);
   box-shadow: 0 0 0 1px rgba(12,166,120,.14) inset, 0 16px 54px #000a inset;
@@ -164,7 +161,6 @@ button:hover {
   content: "";
   position: absolute;
   inset: 0;
-  background: url("https://grainy-gradients.vercel.app/noise.svg");
   opacity: 0.04;
   mix-blend-mode: overlay;
   pointer-events: none;
