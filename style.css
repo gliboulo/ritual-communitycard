@@ -1,25 +1,24 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
-@keyframes pulse-dot {
-  0%, 100% { box-shadow: 0 0 6px #0CA678, 0 0 14px #0CA67855; }
-  50%      { box-shadow: 0 0 10px #0CA678, 0 0 22px #0CA67888; }
-}
 
-/* === BASE === */
+/* === PAGE BACKGROUND HALO === */
 html, body {
   margin: 0;
   padding: 0;
-  background: #0e0f0f;
-  color: #E7ECEB;
   font-family: "Inter", sans-serif;
+  background: #0b0c0c;
+  color: #E7ECEB;
   overflow-x: hidden;
+  position: relative;
 }
 
 body::before {
   content: "";
   position: fixed;
-  inset: 0;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-  opacity: 0.07;
+  inset: -20%;
+  background: radial-gradient(circle at 65% 40%, rgba(12,166,120,.18), transparent 55%),
+              radial-gradient(circle at 30% 80%, rgba(12,166,120,.12), transparent 60%);
+  filter: blur(120px);
+  opacity: .8;
   pointer-events: none;
 }
 
@@ -27,24 +26,12 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
+  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
+  opacity: .08;
   pointer-events: none;
-  z-index: -1;
-  background: radial-gradient(
-    circle at 68% 42%,
-    rgba(12,166,120,0.22) 0%,
-    rgba(12,166,120,0.08) 38%,
-    rgba(0,0,0,0) 75%
-  );
-  filter: blur(120px);
-  opacity: 0.25;
-  animation: ritual-bg-breathe 10s ease-in-out infinite;
 }
 
-@keyframes ritual-bg-breathe {
-  0%, 100% { transform: scale(1); opacity: .22; }
-  50%      { transform: scale(1.08); opacity: .33; }
-}
-
+/* HEADER + FOOTER */
 .header, .footer {
   position: fixed;
   left: 32px;
@@ -52,230 +39,149 @@ body::after {
   align-items: center;
   pointer-events: none;
 }
-.header {
-  top: 22px;
-  font-size: 18px;
-  font-weight: 500;
-}
-.footer {
-  bottom: 22px;
-  font-size: 14px;
-  opacity: .75;
-}
+.header { top: 22px; font-size: 18px; font-weight: 500; }
+.footer { bottom: 22px; font-size: 14px; opacity: .75; }
+.footer a { pointer-events: auto; color: #0CA678; text-decoration: none; }
 
+/* Green dot */
 .header .dot {
   width: 9px; height: 9px;
   background: #0CA678;
   border-radius: 50%;
   margin-right: 10px;
-  animation: pulse-dot 2.8s ease-in-out infinite;
+  animation: pulse 2.8s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100%{ box-shadow:0 0 8px #0CA67880; }
+  50%{ box-shadow:0 0 16px #0CA678; }
 }
 
-.footer a {
-  pointer-events: auto;
-  color: #0CA678;
-  text-decoration: none;
-}
-.footer a:hover { opacity: 1; }
-
+/* === LAYOUT === */
 .layout {
   width: min(92vw, 1600px);
   margin: 120px auto;
   display: grid;
-  grid-template-columns: 300px 1fr;
-  gap: 60px;
+  grid-template-columns: 320px 1fr;
+  gap: 80px;
   align-items: start;
 }
 
+/* === LEFT PANEL (SEXY NOW) === */
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 20px;
+  padding: 22px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.05);
+  backdrop-filter: blur(14px);
 }
 
-.controls input,
-.controls select {
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.06);
-  padding: 12px 16px;
-  border-radius: 12px;
-  font-size: 15px;
-  color: #E7ECEB;
-  transition: border .25s, background .25s, box-shadow .25s;
-}
-
-.controls input:hover,
-.controls select:hover {
-  border-color: rgba(12,166,120,0.35);
-}
-
-.controls input:focus,
-.controls select:focus {
-  background: rgba(12,166,120,0.08);
-  border-color: rgba(12,166,120,0.60);
-  box-shadow: 0 0 14px rgba(12,166,120,0.25);
-  outline: none;
-}
-
-input[type="file"]::-webkit-file-upload-button {
-  background: transparent;
-  border: none;
-  padding: 0;
-  margin-right: 12px;
-  color: #0CA678;
-  cursor: pointer;
-}
-
-#downloadBtn {
-  margin-top: 12px;
-  padding: 14px 0;
+/* Inputs / Select refined */
+input, select {
   width: 100%;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.10);
+  padding: 14px 16px;
   border-radius: 12px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
+  color: #E7ECEB;
   font-size: 15px;
-  text-align: center;
   transition: .25s;
 }
-
-#downloadBtn:hover {
-  background: rgba(12,166,120,0.10);
-  border-color: rgba(12,166,120,0.50);
-  box-shadow: 0 0 18px rgba(12,166,120,0.35);
+input:hover, select:hover { border-color: rgba(12,166,120,.35); }
+input:focus, select:focus {
+  outline: none;
+  border-color: #0CA678;
+  box-shadow: 0 0 12px rgba(12,166,120,.35);
 }
 
+/* Custom File Input (clean AF) */
+#avatarInput {
+  padding: 12px;
+  cursor: pointer;
+}
+#avatarInput::-webkit-file-upload-button {
+  display: none;
+}
+#avatarInput::file-selector-button { display: none; }
+
+/* === CARD STYLING === */
 .preview-zone {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
 }
 
 .card {
   width: min(60vw, 1030px);
-  aspect-ratio: 1030 / 675;
-  border-radius: 26px;
+  aspect-ratio: 1030/675;
+  border-radius: 30px;
   background: #0f1111;
   border: 1px solid rgba(255,255,255,.05);
   box-shadow:
-    0 14px 44px rgba(0,0,0,.50),
-    0 0 32px rgba(0,0,0,.35) inset;
+    0 40px 120px rgba(0,0,0,.60),
+    inset 0 0 60px rgba(12,166,120,.08);
   position: relative;
   overflow: hidden;
 }
 
-.card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  border: 1px solid rgba(255,255,255,.06);
-  pointer-events: none;
-}
-
 .card-inner {
   height: 100%;
-  padding: 48px 54px;
+  padding: 50px 60px;
   display: grid;
-  grid-template-columns: 1.05fr 2fr;
-  gap: 48px;
+  grid-template-columns: 1fr 2fr;
+  gap: 54px;
   align-items: center;
 }
 
 .avatar-wrapper {
-  width: 100%;
-  aspect-ratio: 1;
-  border-radius: 16px;
-  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 18px;
+  border: 1px solid rgba(255,255,255,.06);
   background: #0b0d0d;
-  box-shadow: inset 0 0 22px rgba(18,184,134,0.12);
+  box-shadow: inset 0 0 32px rgba(12,166,120,.18);
   overflow: hidden;
 }
 .avatar {
   width: 100%; height: 100%;
   object-fit: cover;
-  border-radius: inherit;
 }
 
-.pseudo {
-  font-size: 40px;
-  font-weight: 500;
-  margin: 0 0 8px;
-}
-.role-line {
-  font-size: 20px;
-  color: #0CA678;
-  margin-bottom: 14px;
-}
-.desc {
-  font-style: italic;
-  opacity: .85;
-  max-width: 90%;
-}
+.pseudo { font-size: 44px; font-weight: 500; margin-bottom: .3em; }
+.role-line { font-size: 20px; color: #0CA678; margin-bottom: .8em; }
+.desc { opacity: .85; font-style: italic; }
 
 .rarity-pill {
   position: absolute;
-  top: 28px;
-  right: 32px;
-  padding: 6px 18px;
+  top: 26px; right: 28px;
+  padding: 6px 20px;
   border-radius: 999px;
-  border: 1px solid rgba(12,166,120,.30);
+  border: 1px solid rgba(12,166,120,.35);
   background: rgba(12,166,120,.10);
   color: #0CA678;
-  font-size: 15px;
 }
 
+/* Logo bottom-left */
 .brand-mark {
   position: absolute;
-  left: 32px;
-  bottom: 28px;
+  left: 28px; bottom: 28px;
   width: 34px;
-  opacity: .65;
-  pointer-events: none;
+  opacity: .7;
   mix-blend-mode: screen;
 }
 
-.download-wrap {
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  margin-top: 32px;
-}
-
+/* === DOWNLOAD BTN under card === */
 #downloadBtn {
-  padding: 14px 38px;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid rgba(255,255,255,0.10);
+  padding: 14px 40px;
   border-radius: 12px;
-  color: #E7ECEB;
-  font-size: 15px;
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(255,255,255,.08);
   cursor: pointer;
-  transition: background .25s ease, border-color .25s ease, box-shadow .25s ease;
+  transition: .25s;
 }
-
 #downloadBtn:hover {
-  border-color: #0CA678aa;
-  background: rgba(12,166,120,0.10);
-  box-shadow: 0 0 22px rgba(12,166,120,0.18);
+  border-color: #0CA678;
+  box-shadow: 0 0 20px rgba(12,166,120,.25);
+  background: rgba(12,166,120,.12);
 }
-
-#downloadBtn:active {
-  transform: scale(.98);
-}
-
-.card {
-  position: relative;
-  isolation: isolate; /* important pour que le halo reste contenu */
-}
-
-/* grain + glow très fin */
-.card::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  pointer-events: none;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-  background-size: 100%;
-  opacity: 0.06;
-  mix-blend-mode: soft-light;
-}
-
