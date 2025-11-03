@@ -45,34 +45,38 @@ button:hover {
 }
 
 .card {
-  width: 760px;               /* +40 px vs 720 */
-  padding: 28px 34px;         /* un peu plus dense */
-  border-radius: 14px;
+  width: 860px;                /* +100px pour ratio "Remilia ID" */
+  padding: 30px 36px;
+  border-radius: 16px;
   background: #0f1111;
-  border: 1px solid #144C43;
+  border: 1px solid rgba(12,166,120,.28);             /* bord doux */
+  box-shadow:
+    0 0 0 1px rgba(12,166,120,.12) inset,             /* micro-outline */
+    0 12px 40px #0008 inset;                           /* profondeur */
   display: flex;
   align-items: center;
-  gap: 26px;
+  gap: 28px;
   position: relative;
-  box-shadow: 0 0 22px #0a0f0f inset, 0 0 40px #00000055;
+  overflow: visible;                                   /* pas de clip du glow */
   transform-style: preserve-3d;
   backface-visibility: hidden;
   will-change: transform;
-  transition: transform 0.28s cubic-bezier(.21,.54,.32,1.22),
-              box-shadow 0.28s ease, border-color 0.28s ease;
+  transition: transform .28s cubic-bezier(.21,.54,.32,1.22),
+              box-shadow .25s ease, border-color .25s ease;
 }
 .card:hover {
-  box-shadow: 0 0 22px #0a0f0f inset, 0 0 60px #0ca67822;
-  border-color: #176652;
+  border-color: rgba(12,166,120,.38);
+  box-shadow:
+    0 0 0 1px rgba(12,166,120,.18) inset,
+    0 16px 54px #000a inset;
 }
 
-.avatar-wrapper,
-.avatar {
-  width: 108px;              
-  height: 108px;
+.avatar-wrapper, .avatar {
+  width: 120px;                /* 92 → 120 */
+  height: 120px;
   border-radius: 12px;
   object-fit: cover;
-  border: 1px solid #144C43;
+  border: 1px solid rgba(12,166,120,.28);
 }
 
 .info,
@@ -83,21 +87,21 @@ button:hover {
 }
 
 .pseudo {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
   color: #E7ECEB;
   margin: 0;
 }
 
 .role-line {
-  font-size: 15px;
+  font-size: 16px;
   color: #0CA678;
   opacity: 0.95;
   margin: 0;
 }
 
 .desc {
-  font-size: 15px;
+  font-size: 16px;
   color: #E7ECEB;
   opacity: 0.7;
   font-style: italic;
@@ -141,24 +145,40 @@ button:hover {
   text-shadow: 0 0 6px #0CA67899;
 }
 
-.card:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: url("https://i.imgur.com/3QjQZ9T.png");
-  background-size: 220%;
+/* Spectral holo, pur CSS (pas d'asset externe) */
+.card::before{
+  content:"";
+  position:absolute;
+  inset:-1px;                          /* couvre la bordure aussi */
+  border-radius:inherit;
+  background:
+    conic-gradient(from 0deg at 50% 50%,
+      #fff7 0deg 30deg,
+      #0ff7 30deg 90deg,
+      #a6f7 90deg 150deg,
+      #6fff 150deg 210deg,
+      #ff97 210deg 270deg,
+      #fff7 270deg 360deg);
   mix-blend-mode: screen;
-  opacity: 0.14;              
-  pointer-events: none;
+  filter: blur(10px) saturate(120%);
+  opacity:.12;                          /* subtil */
+  pointer-events:none;
+  mask:
+    radial-gradient(140% 200% at 50% -10%, #000 38%, transparent 60%),  /* sheen haut */
+    linear-gradient(#000,#000);                                          /* masque de base */
 }
 
-.card:after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(130deg, transparent 40%, #0ca67822, transparent 60%);
-  mix-blend-mode: screen;
-  opacity: 0.08;
-  pointer-events: none;
+/* Grain très léger posé par-dessus la carte (pas le body) */
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  border-radius:inherit;
+  background-image: url('data:image/svg+xml;utf8,\
+<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160">\
+<filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2" stitchTiles="stitch"/></filter>\
+<rect width="100%" height="100%" filter="url(#n)" opacity="0.06"/></svg>');
+  mix-blend-mode: soft-light;
+  pointer-events:none;
 }
 
