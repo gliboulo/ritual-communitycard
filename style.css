@@ -6,17 +6,13 @@
 :root { --card-w: 820px; }
 
 html, body {
-  height: 100%;
   margin: 0;
   padding: 0;
   background: #0e0f0f;
   font-family: "Inter", sans-serif;
   color: #E7ECEB;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden; /* no scroll */
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 body:before {
@@ -52,8 +48,8 @@ body:before {
 
 .form {
   display: flex;
-  gap: 10px;
-  margin-bottom: 40px;
+  flex-direction: column;
+  gap: 14px;
 }
 
 input, select, button {
@@ -186,3 +182,14 @@ button:hover {
   opacity: 1;
   text-shadow: 0 0 6px #0CA67899;
 }
+
+.layout {
+  display: grid;
+  grid-template-columns: clamp(230px, 22vw, 300px) 1fr;
+  gap: clamp(30px, 6vw, 90px);
+  width: min(95vw, 1600px);
+  margin: 9vh auto;
+  padding: 0 clamp(20px, 3vw, 60px);
+  align-items: center;
+}
+
