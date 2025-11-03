@@ -30,30 +30,32 @@
 
     <input id="avatarInput" type="file" accept="image/*">
   </div>
-</div>
 
-<div class="preview-zone">
-  <div class="card" id="card">
-    <div class="card-inner">
-      <div class="avatar-wrapper">
-        <img id="avatarPreview" class="avatar" />
+  <!-- PUT THIS INSIDE THE GRID -->
+  <div class="preview-zone">
+    <div class="card" id="card">
+      <div class="card-inner">
+        <div class="avatar-wrapper">
+          <img id="avatarPreview" class="avatar" />
+        </div>
+
+        <div class="info">
+          <p id="pseudoDisplay" class="pseudo"></p>
+          <p id="roleDisplay" class="role-line"></p>
+          <p id="descDisplay" class="desc"></p>
+        </div>
       </div>
 
-      <div class="info">
-        <p id="pseudoDisplay" class="pseudo"></p>
-        <p id="roleDisplay" class="role-line"></p>
-        <p id="descDisplay" class="desc"></p>
-      </div>
+      <div id="rarityPill" class="rarity-pill common">Common</div>
+      <img src="Translucent.svg" class="brand-mark" />
     </div>
 
-    <div id="rarityPill" class="rarity-pill common">Common</div>
-    <img src="Translucent.svg" class="brand-mark" />
+    <div class="download-wrap">
+      <button id="downloadBtn">download card</button>
+    </div>
   </div>
-</div>
 
-<div class="download-wrap">
-  <button id="downloadBtn">download card</button>
-</div>
+</div> <!-- THIS closes .layout now, correctly -->
 
 <script src="https://unpkg.com/html-to-image/dist/html-to-image.min.js"></script>
 <script src="script.js"></script>
