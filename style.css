@@ -23,7 +23,28 @@ body::before {
   pointer-events: none;
 }
 
-/* === HEADER / FOOTER === */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -1;
+  background: radial-gradient(
+    circle at 68% 42%,
+    rgba(12,166,120,0.22) 0%,
+    rgba(12,166,120,0.08) 38%,
+    rgba(0,0,0,0) 75%
+  );
+  filter: blur(120px);
+  opacity: 0.25;
+  animation: ritual-bg-breathe 10s ease-in-out infinite;
+}
+
+@keyframes ritual-bg-breathe {
+  0%, 100% { transform: scale(1); opacity: .22; }
+  50%      { transform: scale(1.08); opacity: .33; }
+}
+
 .header, .footer {
   position: fixed;
   left: 32px;
@@ -57,7 +78,6 @@ body::before {
 }
 .footer a:hover { opacity: 1; }
 
-/* === PAGE LAYOUT === */
 .layout {
   width: min(92vw, 1600px);
   margin: 120px auto;
@@ -67,7 +87,6 @@ body::before {
   align-items: start;
 }
 
-/* === CONTROLS (LEFT) === */
 .controls {
   display: flex;
   flex-direction: column;
@@ -94,7 +113,6 @@ input:focus, select:focus {
   background: #131717;
 }
 
-/* File input custom */
 input[type="file"]::-webkit-file-upload-button {
   background: #111414;
   border: 1px solid rgba(255,255,255,.10);
@@ -107,7 +125,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   border-color: #0CA678;
 }
 
-/* Download button */
 #downloadBtn {
   margin-top: 12px;
   background: transparent;
@@ -123,13 +140,11 @@ input[type="file"]::-webkit-file-upload-button:hover {
   background: rgba(12,166,120,.10);
 }
 
-/* === CARD AREA === */
 .preview-zone {
   display: flex;
   justify-content: center;
 }
 
-/* Your exact card ratio + refined borders like your screenshot */
 .card {
   width: min(60vw, 1030px);
   aspect-ratio: 1030 / 675;
@@ -152,7 +167,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   pointer-events: none;
 }
 
-/* Inner layout */
 .card-inner {
   height: 100%;
   padding: 48px 54px;
@@ -162,7 +176,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   align-items: center;
 }
 
-/* Avatar */
 .avatar-wrapper {
   width: 100%;
   aspect-ratio: 1;
@@ -178,7 +191,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   border-radius: inherit;
 }
 
-/* Text */
 .pseudo {
   font-size: 40px;
   font-weight: 500;
@@ -195,7 +207,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   max-width: 90%;
 }
 
-/* Rarity pill */
 .rarity-pill {
   position: absolute;
   top: 28px;
@@ -208,7 +219,6 @@ input[type="file"]::-webkit-file-upload-button:hover {
   font-size: 15px;
 }
 
-/* Bottom-left brand logo */
 .brand-mark {
   position: absolute;
   left: 32px;
@@ -247,32 +257,9 @@ input[type="file"]::-webkit-file-upload-button:hover {
   transform: scale(.98);
 }
 
-/* === HALO FIN, BLOOM SUBTIL, STYLE RITUAL CONTRIBUTIONS === */
 .card {
   position: relative;
   isolation: isolate; /* important pour que le halo reste contenu */
-}
-
-/* halo spectral vivant + respiration lente */
-.card::before {
-  content: "";
-  position: absolute;
-  inset: -2px;
-  border-radius: inherit;
-  background: conic-gradient(
-    from 0deg,
-    rgba(12,166,120,0.22),
-    rgba(12,166,120,0.05),
-    rgba(12,166,120,0.16),
-    rgba(12,166,120,0.28),
-    rgba(12,166,120,0.22)
-  );
-  filter: blur(32px);
-  opacity: 0.22;
-  pointer-events: none;
-  z-index: -1;
-  animation: ritual-halo 7.5s ease-in-out infinite;
-  transition: opacity .45s ease, filter .45s ease;
 }
 
 /* grain + glow très fin */
@@ -288,14 +275,3 @@ input[type="file"]::-webkit-file-upload-button:hover {
   mix-blend-mode: soft-light;
 }
 
-/* respiration très douce */
-@keyframes ritual-halo {
-  0%, 100% { transform: rotate(0deg) scale(1); opacity: 0.20; }
-  50%      { transform: rotate(85deg) scale(1.04); opacity: 0.34; }
-}
-
-/* hover = léger bloom, pas plus */
-.card:hover::before {
-  filter: blur(48px);
-  opacity: 0.38;
-}
