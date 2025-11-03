@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>Ritual Card Generator</title>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+
+<div class="form">
+  <input id="pseudo" type="text" placeholder="pseudo...">
+  
+  <select id="role">
+    <option>Initiate</option>
+    <option>Ritualist Ascendant</option>
+    <option>Ritty Bitty</option>
+    <option>Ritty</option>
+    <option>Ritualist</option>
+    <option>Zealot</option>
+    <option>Mods</option>
+    <option>Foundation Team</option>
+  </select>
+
+  <input id="avatarInput" type="file" accept="image/*">
+  <button id="downloadBtn">download card</button>
+</div>
+
+<div id="card" class="card">
+  <div class="avatar-wrapper">
+    <img id="avatarPreview" class="avatar" src="" alt="">
+  </div>
+
+  <div class="info">
+    <div id="pseudoDisplay" class="pseudo">Pseudo</div>
+    <div id="roleDisplay" class="role-line">Role · Grade</div>
+    <div id="descDisplay" class="desc"></div>
+  </div>
+</div>
+
+<script src="https://unpkg.com/html-to-image/dist/html-to-image.min.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
