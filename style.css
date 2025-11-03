@@ -46,8 +46,8 @@ button:hover {
 }
 
 .card {
-  width: 820px;
-  height: 260px;                     /* ratio remilia */
+  width: 780px;
+  height: 230px;
   padding: 28px 34px;
   border-radius: 16px;
   background: #0f1111;
@@ -150,32 +150,22 @@ button:hover {
   text-shadow: 0 0 6px #0CA67899;
 }
 
-.card::before {
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  background: conic-gradient(
-    from 0deg at 50% 50%,
-    #ffffff33 0 30deg,
-    #00ffff33 30deg 90deg,
-    #aaffff33 90deg 150deg,
-    #66ffff33 150deg 210deg,
-    #ff99ff33 210deg 270deg,
-    #ffffff33 270deg 360deg
-  );
+.card:before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 30% 20%, #0ca67822 0%, transparent 60%);
+  opacity: 0.18;
   mix-blend-mode: screen;
-  opacity: .08;
-  pointer-events:none;
+  pointer-events: none;
 }
 
-.card::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  border-radius:inherit;
-  background-image: url('https://grainy-gradients.vercel.app/noise.svg');
-  opacity:.05;
-  mix-blend-mode: soft-light;
-  pointer-events:none;
+.card:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("https://grainy-gradients.vercel.app/noise.svg");
+  opacity: 0.04;
+  mix-blend-mode: overlay;
+  pointer-events: none;
 }
