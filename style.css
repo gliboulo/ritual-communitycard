@@ -73,25 +73,25 @@ button:hover {
 
 .card{
   position: relative;
-  width: min(1000px, 82vw);   /* large mais jamais débile */
-  height: 230px;              /* ratio net et assumé */
-  margin-top: 48px;
+  width: min(1020px, 85vw);
+  height: 220px;
+  margin: 48px auto;
   border-radius: 16px;
   background: #0f1111;
   border: 1px solid rgba(12,166,120,.25);
   box-shadow:
-    inset 0 0 0 1px rgba(12,166,120,.12),
-    0 14px 48px rgba(0,0,0,.55);
-  overflow: hidden;
+    inset 0 0 0 1px rgba(12,166,120,.10),
+    0 18px 60px rgba(0,0,0,.55);
+  display: flex;
+  align-items: center;   
+  padding: 32px 40px;   
 }
 
 .card-inner{
-  height: 100%;
-  display: grid;
-  grid-template-columns: 150px 1fr;
-  padding: 32px 46px;
-  column-gap: 38px;
+  display: flex;
   align-items: center;
+  gap: 34px;
+  width: 100%;
 }
 
 .card:hover{
@@ -102,22 +102,20 @@ button:hover {
 }
 
 .avatar-wrapper{
-  width: 150px;
-  height: 150px;
-  border-radius: 14px;
-  border: 1px solid rgba(12,166,120,.30);
+  width: 140px;
+  height: 140px;
+  border-radius: 12px;
+  border: 1px solid rgba(12,166,120,.28);
   background: #0c0f0f;
-  box-shadow: inset 0 0 22px rgba(12,166,120,.08);
   display:flex;
   align-items:center;
   justify-content:center;
 }
-
 .avatar{
   width: 100%;
   height: 100%;
-  border-radius: 10px;
   object-fit: cover;
+  border-radius: 10px;
 }
 
 /* === TEXTS === */
