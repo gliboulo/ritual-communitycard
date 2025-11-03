@@ -227,6 +227,7 @@ input:focus, select:focus {
 .desc { font-size: 26px; opacity: .7; font-style: italic; }
 
 .rarity-pill {
+  font-size: 16px;
   position: absolute;
   top: 50px; right: 48px;
   padding: 16px 30px;
@@ -234,7 +235,6 @@ input:focus, select:focus {
   border: 1px solid rgba(12,166,120,.35);
   background: rgba(12,166,120,.10);
   color: #0CA678;
-  font-size: 16px;
 }
 
 /* Logo bottom-left */
