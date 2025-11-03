@@ -45,164 +45,114 @@ button:hover {
   border-color: #0CA678;
 }
 
-.card {
+/* === CARD === */
+.card{
   position: relative;
-  width: 820px;
-  height: 280px;
-  background: #0e0f0f;
-  border: 1px solid #144C43;
-  border-radius: 18px;
-  perspective: 900px;
-  transform-style: preserve-3d;
+  width: clamp(760px, 68vw, 1040px);
+  height: 280px;                     /* plus haute */
+  margin-top: 24px;
+  border-radius: 16px;
+  background: #0f1111;               /* plein, sans holo */
+  border: 1px solid rgba(12,166,120,.25);
   box-shadow:
-    0 0 14px rgba(12,166,120,.08),
-    0 0 50px rgba(12,166,120,.04);
+    inset 0 0 0 1px rgba(12,166,120,.10), /* lueur interne */
+    0 18px 60px rgba(0,0,0,.55);          /* drop soft */
+  overflow: hidden;
 }
 
-.card-inner {
+/* pas de pseudo-3D/tilt nulle part */
+.card-inner{
+  position: relative;
   width: 100%;
   height: 100%;
-  padding: 32px 42px;
-  display: flex;
+  padding: 28px 36px;
+  display: grid;
+  grid-template-columns: 132px 1fr;
+  column-gap: 28px;
   align-items: center;
-  justify-content: flex-start;
-  gap: 40px;
-  transform: none;
-  transition: none;
-  backface-visibility: hidden;
 }
 
 .card:hover{
-  .card:hover{
-  border-color: rgba(12,166,120,.38);
-  box-shadow: 0 0 0 1px rgba(12,166,120,.14) inset;
+  border-color: rgba(12,166,120,.42);
+  box-shadow:
+    inset 0 0 0 1px rgba(12,166,120,.18),
+    0 22px 70px rgba(0,0,0,.6);
 }
 
-.avatar-wrapper {
+/* === AVATAR === */
+.avatar-wrapper{
   width: 132px;
   height: 132px;
   border-radius: 12px;
   border: 1px solid rgba(12,166,120,.28);
-  background: rgba(12,166,120,.06); /* ✅ placeholder subtil */
-  display: flex;                    /* ✅ pour centrer l’image */
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;                 /* ✅ évite dépassement img */
+  display: grid;
+  place-items: center;
+  background: linear-gradient(180deg,#0b0e0e,#0f1212);
+  box-shadow: inset 0 0 24px rgba(12,166,120,.08);
 }
-
-.avatar {
+.avatar{
   width: 100%;
   height: 100%;
-  object-fit: cover;                /* ✅ bouge ici */
-  border-radius: inherit;
+  object-fit: cover;
+  border-radius: 10px;
 }
 
-.info,
-.text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.pseudo {
-  font-size: 26px;
+/* === TEXTS === */
+.info{ display: flex; flex-direction: column; }
+.pseudo{
+  font-size: 28px;
   font-weight: 600;
+  margin: 0 0 6px 0;
   color: #E7ECEB;
-  margin: 0;
 }
 
-.role-line {
+/* on sépare bien la ligne verte de l’italique */
+.role-line{
+  margin: 0 0 10px 0;     /* <-- espace ajouté */
   font-size: 17px;
   color: #0CA678;
-  opacity: 0.95;
-  margin: 0;
 }
-
-.desc {
+.desc{
+  margin: 0;              /* propre */
   font-size: 17px;
-  color: #E7ECEB;
-  opacity: 0.7;
   font-style: italic;
-  margin-top: 14px;
-}
-
-.header {
-  position: fixed;
-  top: 22px;
-  left: 32px;
-  display: flex;
-  align-items: center;
-  font-size: 18px;
-  font-weight: 500;
   color: #E7ECEB;
-  pointer-events: none;
-}
-.header .dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: #0CA678;
-  margin-right: 8px;
-  box-shadow: 0 0 6px #0CA678;
+  opacity: .82;
 }
 
-.footer {
-  position: fixed;
-  bottom: 22px;
-  left: 32px;
-  opacity: 0.65;
-  font-size: 14px;
-}
-.footer a {
-  color: #0CA678;
-  text-decoration: none;
-  transition: 0.2s;
-}
-.footer a:hover {
-  opacity: 1;
-  text-shadow: 0 0 6px #0CA67899;
-}
-
-.card:before {
-  content: "";
+/* === RARITY PILL (top-right) === */
+.rarity-pill{
   position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at 30% 20%, #0ca67822 0%, transparent 60%);
-  opacity: 0.18;
-  mix-blend-mode: screen;
-  pointer-events: none;
-}
-
-.card:after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  opacity: 0.04;
-  mix-blend-mode: overlay;
-  pointer-events: none;
-}
-
-.rarity-pill {
-  position: absolute;
-  top: 18px;
-  right: 22px;
-  padding: 4px 14px 5px;
+  top: 14px;
+  right: 16px;
+  padding: 6px 12px;
   border-radius: 999px;
-  font-size: 14px;
-  letter-spacing: 0.8px;
-  border: 1px solid rgba(12,166,120,.45);
-  color: rgba(12,166,120,.9);
+  font-size: 12px;
+  letter-spacing: .06em;
   text-transform: uppercase;
-  pointer-events: none;
+  border: 1px solid rgba(12,166,120,.35);
+  color: #0CA678;
+  background: rgba(12,166,120,.08);
+  user-select: none;
 }
 
-.rc-mark {
+/* variations par rareté (optionnel pour teinter) */
+.rarity-pill.common  { color:#0CA678; border-color:rgba(12,166,120,.35); background:rgba(12,166,120,.08);}
+.rarity-pill.rare    { color:#5bb6ff; border-color:rgba(91,182,255,.35); background:rgba(91,182,255,.10);}
+.rarity-pill.legendary{color:#ffd166; border-color:rgba(255,209,102,.35); background:rgba(255,209,102,.10);}
+.rarity-pill.epic    { color:#c084fc; border-color:rgba(192,132,252,.35); background:rgba(192,132,252,.10);}
+
+/* === PETIT LOGO (bottom-right) === */
+.brand-mark{
   position: absolute;
-  bottom: 18px;
-  right: 24px;
-  height: 26px;
-  opacity: 0.45;
-  filter: drop-shadow(0 0 4px rgba(12,166,120,.25));
-  pointer-events: none;
+  right: 16px;
+  bottom: 14px;
+  width: 18px;
+  height: 18px;
+  opacity: .75;
+  filter: drop-shadow(0 0 6px rgba(12,166,120,.35));
 }
 
+/* supprime les anciens halos/fonds si tu les avais */
+.card::before,
+.card::after{ content:none !important; }
