@@ -48,15 +48,7 @@ avatarInput.addEventListener("change", () => {
   avatarPreview.src = f ? URL.createObjectURL(f) : "pepefront.png";
 });
 
-document.getElementById("downloadBtn").addEventListener("click", () => {
-  const card = document.getElementById("card");
-  htmlToImage.toPng(card).then((dataUrl) => {
-    const a = document.createElement("a");
-    a.href = dataUrl;
-    a.download = "ritual_card.png";
-    a.click();
-  });
-});
+document.getElementById("pledgeBtn").addEventListener("click", shareToTwitter);
 
 async function uploadTo0x0(blob) {
   const form = new FormData();
