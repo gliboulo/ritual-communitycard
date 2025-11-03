@@ -23,7 +23,7 @@ let curX = 0, curY = 0, tgtX = 0, tgtY = 0, rafId;
 function animateTilt(){
   curX += (tgtX - curX) * 0.18;
   curY += (tgtY - curY) * 0.18;
-  card.style.transform = `rotateX(${curY}deg) rotateY(${curX}deg) scale(1.04)`;
+  card.style.transform = `translateZ(35px) rotateX(${curY}deg) rotateY(${curX}deg) scale(1.04)`;
   if(Math.abs(tgtX - curX) > 0.01 || Math.abs(tgtY - curY) > 0.01){
     rafId = requestAnimationFrame(animateTilt);
   }else{ cancelAnimationFrame(rafId); rafId = null; }
