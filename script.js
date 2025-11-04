@@ -53,7 +53,7 @@ avatarInput.addEventListener("change", () => {
 });
 
 async function copyCardToClipboard() {
-  const card = document.getElementById("card");
+  const card = document.querySelector(".card-capture-wrap");
   const hint = document.querySelector(".copy-hint");
   const feedback = document.querySelector(".copy-feedback");
 
