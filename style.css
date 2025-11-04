@@ -302,6 +302,12 @@ input:focus, select:focus {
   opacity: 1;
 }
 
+/* Ne jamais afficher le hint pendant l’état “copied” */
+.card.copied .copy-hint {
+  opacity: 0 !important;
+}
+
+
 .copy-feedback {
   color: #8AF2B8;
   opacity: 0;
