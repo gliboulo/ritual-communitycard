@@ -70,71 +70,93 @@
   </style>
 </head> 
   
-<body>
-<header class="header">
-  <div class="dot"></div>
-  <span>Ritual Card Generator</span>
-</header>  
+<body class="font-inter bg-base-bg text-base-text h-screen overflow-hidden flex flex-col">
 
-<div class="layout">
+  <!-- Header -->
+  <header class="fixed top-0 left-0 w-full px-8 py-5 flex items-center gap-3 text-[18px] font-medium border-b border-base-border bg-base-bg/65 backdrop-blur-md pointer-events-none">
+    <div class="w-[9px] h-[9px] bg-acc rounded-full animate-pulseDot"></div>
+    <span>Ritual Card Generator</span>
+  </header>
 
-<div class="controls">
-  <p>create your ritual card</p>
-  <input id="pseudo" type="text" placeholder="your username">
-  <select id="role" required>
-    <option value="" disabled selected hidden>what’s your DC role?</option>
-    <option>Initiate</option>
-    <option>Ritualist Ascendant</option>
-    <option>Ritty Bitty</option>
-    <option>Ritty</option>
-    <option>Ritualist</option>
-    <option>Zealot</option>
-    <option>Mods</option>
-    <option>Foundation Team</option>
-  </select>
+  <!-- Layout -->
+  <div class="flex-1 grid grid-cols-[350px_1fr] items-center justify-center px-[60px] pt-[100px] gap-12
+              max-[900px]:grid-cols-1 max-[900px]:px-6 max-[900px]:pt-[120px] max-[900px]:pb-[80px]">
 
-  <label class="file-label">upload your pfp <input id="avatarInput" type="file" accept="image/*">
-  </label>
-</div>
+    <!-- Controls -->
+    <div class="flex flex-col gap-6 p-8 rounded-xl bg-white/5 border border-white/10 backdrop-blur-lg max-[900px]:w-full">
+      <p class="text-base-text/80 text-[17px]">create your ritual card</p>
 
-  <div class="preview-zone">
-  
-<div class="card" id="card">
-  
-  <div id="cardContent">
-    <div class="card-inner">
-      <div class="avatar-wrapper">
-        <img id="avatarPreview" src="pepefront.png" class="avatar" />
-      </div>
+      <input id="pseudo"
+        type="text"
+        placeholder="your username"
+        class="px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-acc focus:outline-none focus:shadow-[0_0_12px_rgba(12,166,120,.35)] transition" />
 
-      <div class="info">
-        <p id="pseudoDisplay" class="pseudo"></p>
-        <p id="roleDisplay" class="role-line"></p>
-        <p id="descDisplay" class="desc"></p>
-      </div>
+      <select id="role"
+        class="px-4 py-3 rounded-lg bg-white/5 border border-white/10 focus:border-acc text-base-text transition appearance-none bg-[url('data:image/svg+xml;charset=UTF-8,%3Csvg width=\'12\' height=\'8\' viewBox=\'0 0 12 8\' fill=\'none\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cpath d=\'M1 1L6 6L11 1\' stroke=\'%230CA678\' stroke-width=\'2\'/%3E%3C/svg%3E')] bg-no-repeat bg-[right_14px_center] bg-[length:14px]">
+        <option value="" disabled selected hidden>what’s your DC role?</option>
+        <option>Initiate</option>
+        <option>Ritualist Ascendant</option>
+        <option>Ritty Bitty</option>
+        <option>Ritty</option>
+        <option>Ritualist</option>
+        <option>Zealot</option>
+        <option>Mods</option>
+        <option>Foundation Team</option>
+      </select>
+
+      <label class="file-label px-4 py-3 rounded-lg bg-white/5 border border-white/10 text-base-text/40 hover:border-acc/40 transition cursor-pointer">
+        upload your pfp
+        <input id="avatarInput" type="file" accept="image/*" class="hidden">
+      </label>
     </div>
 
-    <div id="rarityPill" class="rarity-pill common">Common</div>
-    <img src="Translucent.svg" class="brand-mark" />
+    <!-- Preview + Card -->
+    <div class="flex flex-col items-center gap-7 scale-[0.8] origin-center max-[900px]:scale-100">
+
+      <div id="card"
+        class="relative w-[min(70vw,1030px)] aspect-[1030/675] rounded-card bg-[#0f1111]
+               border border-white/5 shadow-ritual overflow-hidden cursor-pointer transition
+               hover:shadow-ritualHover hover:border-acc/50">
+
+        <div class="h-full grid grid-cols-[1fr_2fr] gap-[54px] p-[50px_60px] items-center max-[700px]:grid-cols-1 max-[700px]:p-6">
+          
+          <div class="w-[400px] h-[400px] rounded-xl bg-white/5 border border-white/10 shadow-[inset_0_0_32px_rgba(12,166,120,.18)] overflow-hidden max-[700px]:mx-auto">
+            <img id="avatarPreview" src="pepefront.png" class="w-[400px] h-[490px] object-cover" />
+          </div>
+
+          <div class="info">
+            <p id="pseudoDisplay" class="text-[56px] font-semibold -mt-5"></p>
+            <p id="roleDisplay" class="text-[30px] text-acc opacity-85 mb-3"></p>
+            <p id="descDisplay" class="text-[26px] opacity-70 italic"></p>
+          </div>
+        </div>
+
+        <div id="rarityPill"
+          class="absolute top-[50px] right-[48px] text-[22px] px-[30px] py-[16px] rounded-full border border-acc/35 bg-acc/10 text-acc">
+          Common
+        </div>
+
+        <img src="Translucent.svg" class="absolute left-[170px] top-[90px] opacity-80 mix-blend-screen" />
+
+        <span class="copy-hint absolute bottom-[38px] right-[38px] text-[18px] opacity-0 text-white/65 transition pointer-events-none">click to copy</span>
+        <span class="copy-feedback absolute bottom-[38px] right-[38px] text-[18px] opacity-0 text-[#8AF2B8] font-medium pointer-events-none">copied!</span>
+      </div>
+
+      <button id="pledgeBtn"
+        class="px-8 py-4 rounded-full border-2 border-[#A6FFC0]/60 outline outline-[3px] outline-[#A6FFC0]/15
+               bg-[rgba(15,50,30,0.35)] text-[#A6FFCB] text-[20px] font-semibold backdrop-blur-md transition
+               hover:bg-[rgba(20,80,50,0.55)] hover:border-[#C7FFE0] hover:outline-[#A6FFC0]/45 hover:text-[#C7FFE0]
+               active:scale-[0.96]">
+        pledge to the ritual
+      </button>
+
+    </div>
   </div>
 
-  <!-- ✅ Ces deux doivent être en dehors = ne seront pas capturés -->
-  <span class="copy-hint">click to copy</span>
-  <span class="copy-feedback">copied!</span>
-</div>
-
-  <!-- ✅ Bouton maintenant placé au bon endroit -->
-  <button id="pledgeBtn">pledge to the ritual</button>
-
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
-<script src="script.js"></script>
-
-<footer class="footer">
-  <a href="https://x.com/pince_croco" target="_blank">built by pince croco</a>
-  <span id="pledgeCount" class="pledge-counter">will you take the pledge? 🕯️</span>
-</footer>
-  
+  <footer class="fixed bottom-[22px] left-[32px] right-[32px] text-[14px] opacity-75 flex justify-between pointer-events-none">
+    <a href="https://x.com/pince_croco" target="_blank" class="pointer-events-auto text-base-text hover:text-acc transition">built by pince croco</a>
+    <span id="pledgeCount" class="text-[#8AF2B8] opacity-85 pointer-events-none animate-pledgeGlow">will you take the pledge? 🕯️</span>
+  </footer>
 </body>
+
 </html>
