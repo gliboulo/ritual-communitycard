@@ -33,27 +33,29 @@
 
   <div class="preview-zone">
   
-  <div class="card" id="card">
-     <div id="cardContent">
-      <div class="card-inner">
-        <div class="avatar-wrapper">
-          <img id="avatarPreview" src="pepefront.png" class="avatar" />
-        </div>
-  
-        <div class="info">
-          <p id="pseudoDisplay" class="pseudo"></p>
-          <p id="roleDisplay" class="role-line"></p>
-          <p id="descDisplay" class="desc"></p>
-        </div>
-      </div>  
+ <div class="card" id="card">
+  <div id="cardContent">
+    <div class="card-inner">
+      <div class="avatar-wrapper">
+        <img id="avatarPreview" src="pepefront.png" class="avatar" />
+      </div>
+
+      <div class="info">
+        <p id="pseudoDisplay" class="pseudo"></p>
+        <p id="roleDisplay" class="role-line"></p>
+        <p id="descDisplay" class="desc"></p>
+      </div>
     </div>
 
+    <!-- ✅ Ces éléments doivent être INSIDE cardContent -->
     <div id="rarityPill" class="rarity-pill common">Common</div>
     <img src="Translucent.svg" class="brand-mark" />
+
     <span class="copy-hint">click to copy</span>
     <span class="copy-feedback">copied!</span>
 
   </div>
+</div>
 
   <!-- ✅ Bouton maintenant placé au bon endroit -->
   <button id="pledgeBtn">pledge to the ritual</button>
