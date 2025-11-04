@@ -59,7 +59,7 @@ async function copyCardToClipboard() {
   const hint = document.querySelector(".copy-hint");
   const feedback = document.querySelector(".copy-feedback");
 
-  // Masque UI avant capture
+  // masque ui pendant capture
   card.classList.add("hide-copy-ui");
 
   const blob = await htmlToImage.toBlob(cardContent, {
@@ -67,22 +67,29 @@ async function copyCardToClipboard() {
     backgroundColor: "#0d1512"
   });
 
-  // Remet après capture
   card.classList.remove("hide-copy-ui");
 
   await navigator.clipboard.write([
     new ClipboardItem({ "image/png": blob })
   ]);
 
-  // Animation copied!
-  card.classList.add("copied");
+  // --- SEQUENCE ANIMÉE SANS NOUVEL ELEMENT ---
+  const originalText = feedback.textContent;
+
+  // 1) apparition du [summoning…] ✧⟡
+  feedback.textContent = "[summoning…] ✧⟡";
   feedback.style.opacity = 1;
-  hint.style.opacity = 0;
+
+  setTimeout(() => {
+    // 2) repasse à copied!
+    feedback.textContent = originalText;
+    card.classList.add("copied");
+  }, 450);
 
   setTimeout(() => {
     feedback.style.opacity = 0;
     card.classList.remove("copied");
-  }, 700);
+  }, 1200);
 }
 
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
