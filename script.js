@@ -44,7 +44,6 @@ function update() {
   rarityPill.textContent = grade;
   rarityPill.className   = "rarity-pill " + grade.toLowerCase();
 }
-
 pseudoInput.addEventListener("input", update);
 roleSelect.addEventListener("change", update);
 
@@ -95,7 +94,6 @@ async function copyCardToClipboard() {
 
   }, 2000);
 }
-
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
 
 // --- Tweet button ---
@@ -110,9 +108,29 @@ take yours on https://nafyn.github.io/ritual-communitycard/`
   window.open(url, "_blank");
 }
 
-document.getElementById("pledgeBtn").addEventListener("click", shareToTwitter);
+// --- CounterAPI namespace + key ---
+const COUNTER_URL = "https://counterapi.dev/api/ritual/pledge";
 
-update();
+// --- Display counter on load ---
+fetch(COUNTER_URL)
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("pledgeCount").textContent =
+      `${data.count} initiates have taken the pledge · 🕯️`;
+  });
+
+// --- Increment counter and tweet ---
+document.getElementById("pledgeBtn").addEventListener("click", async () => {
+  const res = await fetch(`${COUNTER_URL}/increment`);
+  const data = await res.json();
+
+  // update the UI
+  document.getElementById("pledgeCount").textContent =
+    `${data.count} initiates have taken the pledge · 🕯️`;
+
+  // then tweet
+  shareToTwitter();
+});
 
 // --- Create the summoning label ---
 const card = document.getElementById("card");
@@ -121,31 +139,4 @@ summonSpan.className = "copy-summon";
 summonSpan.textContent = "[ summoning… ] ✧⟡";
 card.appendChild(summonSpan);
 
-// --- Load pledge count ---
-fetch("https://api.npoint.io/290a358899c1e5d5553e")
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("pledgeCount").textContent =
-      `${data.pledgeCount} initiates have taken the pledge · 🕯️`;
-  });
-
-async function incrementPledge() {
-  const res = await fetch("https://api.npoint.io/290a358899c1e5d5553e");
-  const data = await res.json();
-  const newCount = data.pledgeCount + 1;
-
-  await fetch("https://api.npoint.io/290a358899c1e5d5553e", {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ pledgeCount: newCount })
-  });
-
-  document.getElementById("pledgeCount").textContent =
-    `${newCount} initiates have taken the pledge · 🕯️`;
-}
-
-// → on exécute increment + tweet ensemble :
-document.getElementById("pledgeBtn").addEventListener("click", async () => {
-  await incrementPledge();
-  shareToTwitter();
-});
+update();
