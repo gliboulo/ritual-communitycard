@@ -329,22 +329,6 @@ input:focus, select:focus {
   animation: shimmerGlow 0.6s ease;
 }
 
-.copy-summon {
-  position: absolute;
-  bottom: 38px;
-  right: 38px;
-  font-size: 18px;
-  opacity: 0;
-  color: #A6FFCB;
-  pointer-events: none;
-  transition: opacity .25s ease;
-}
-
-/* Empêche que ça reste affiché pendant la capture */
-.card.hide-copy-ui .copy-summon {
-  opacity: 0 !important;
-}
-
 @keyframes shimmerGlow {
   0%   { box-shadow: 0 0 0px rgba(120,255,180,0.0); }
   50%  { box-shadow: 0 0 18px rgba(120,255,180,0.35); }
