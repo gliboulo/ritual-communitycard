@@ -73,24 +73,31 @@ async function copyCardToClipboard() {
     new ClipboardItem({ "image/png": blob })
   ]);
 
-  // --- SEQUENCE ANIMÉE SANS NOUVEL ELEMENT ---
-  const originalText = feedback.textContent;
+ // --- SEQUENCE ANIMÉE SANS OVERLAP ---
+const originalText = feedback.textContent;
 
-  // 1) apparition du [summoning…] ✧⟡
-  feedback.textContent = "[summoning…] ✧⟡";
-  feedback.style.opacity = 1;
+// 0) hide hint instantly so nothing overlaps
+hint.style.opacity = 0;
 
-  setTimeout(() => {
-    // 2) repasse à copied!
-    feedback.textContent = originalText;
-    card.classList.add("copied");
-  }, 450);
+// 1) show summoning
+feedback.textContent = "[summoning…] ✧⟡";
+feedback.style.opacity = 1;
 
-  setTimeout(() => {
-    feedback.style.opacity = 0;
-    card.classList.remove("copied");
-  }, 1200);
-}
+setTimeout(() => {
+  // 2) switch to copied! + glow
+  feedback.textContent = originalText;
+  card.classList.add("copied");
+}, 450);
+
+setTimeout(() => {
+  // 3) fade everything out & restore hover behavior
+  feedback.style.opacity = 0;
+  card.classList.remove("copied");
+  
+  // allow hover to show "click to copy" again
+  // (only once animation ends so no flicker)
+  hint.style.opacity = ""; // reset to CSS-controlled opacity
+}, 1200);
 
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
 
