@@ -68,13 +68,9 @@ async function copyCardToClipboard() {
   hint.style.opacity = 0; //
 
   setTimeout(() => {
-    feedback.style.opacity = 0;
-    card.classList.remove("copied");
-  }, 700);
-
-  setTimeout(() => {
-    hint.style.opacity = 1; //
-  }, 1000);
+  feedback.style.opacity = 0;
+  card.classList.remove("copied");
+}, 700);
 }
 
 
