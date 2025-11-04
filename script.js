@@ -96,17 +96,17 @@ async function copyCardToClipboard() {
 }
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
 
-// --- Tweet button ---
-function shareToTwitter() {
+// --- Tweet button (only tweet now) ---
+document.getElementById("pledgeBtn").addEventListener("click", () => {
   const tweetText = encodeURIComponent(
 `i have taken the pledge. the ritual grows stronger 🕯️
 
 take yours on https://nafyn.github.io/ritual-communitycard/`
   );
 
-  const url = `https://twitter.com/intent/tweet?text=${tweetText}`;
-  window.open(url, "_blank");
-}
+  const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}`;
+  window.open(tweetUrl, "_blank");
+});
 
 // --- Create the summoning label ---
 const card = document.getElementById("card");
