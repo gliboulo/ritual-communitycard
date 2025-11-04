@@ -111,7 +111,7 @@ take yours on https://nafyn.github.io/ritual-communitycard/`
 const COUNTER_URL = "https://ritual-counter-proxy.nafnafyng.workers.dev/api/pledge";
 
 // Display initial
-fetch(COUNTER_URL)
+fetch(`https://ritual-counter-proxy.nafnafyng.workers.dev/api/pledge`)
   .then(res => res.json())
   .then(data => {
     document.getElementById("pledgeCount").textContent =
@@ -119,7 +119,9 @@ fetch(COUNTER_URL)
   });
 
 document.getElementById("pledgeBtn").addEventListener("click", async () => {
-  const res = await fetch(`${COUNTER_URL}/increment`, { method: "POST" });
+  const res = await fetch(`https://ritual-counter-proxy.nafnafyng.workers.dev/api/pledge/up`, {
+  method: "POST"
+});
   const data = await res.json();
 
   document.getElementById("pledgeCount").textContent =
