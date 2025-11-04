@@ -52,22 +52,29 @@ avatarInput.addEventListener("change", () => {
   avatarPreview.src = f ? URL.createObjectURL(f) : "pepefront.png";
 });
 
+// --- Copy image to clipboard (correct, no hint included) ---
 async function copyCardToClipboard() {
-  const cardContent = document.getElementById("cardContent"); // ← Nouveau
   const card = document.getElementById("card");
+  const cardContent = document.getElementById("cardContent");
   const hint = document.querySelector(".copy-hint");
   const feedback = document.querySelector(".copy-feedback");
 
+  // ✅ Masque les overlays avant capture
+  card.classList.add("hide-copy-ui");
+
   const blob = await htmlToImage.toBlob(cardContent, {
     pixelRatio: 2,
-    backgroundColor: "#0d1512" // évite le noir PNG
+    backgroundColor: "#0d1512"
   });
+
+  // ✅ Réaffiche ensuite
+  card.classList.remove("hide-copy-ui");
 
   await navigator.clipboard.write([
     new ClipboardItem({ "image/png": blob })
   ]);
 
-  // animation existante conservée
+  // ✅ Effet "copied!"
   card.classList.add("copied");
   feedback.style.opacity = 1;
   hint.style.opacity = 0;
