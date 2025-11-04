@@ -123,3 +123,11 @@ summonSpan.className = "copy-summon";
 summonSpan.textContent = "[ summoning… ] ✧⟡";
 card.appendChild(summonSpan);
 
+// --- Load pledge count ---
+fetch("https://api.npoint.io/290a358899c1e5d5553e")
+  .then(res => res.json())
+  .then(data => {
+    document.getElementById("pledgeCount").textContent =
+      `${data.count} initiates have taken the pledge · 🕯️`;
+  });
+
