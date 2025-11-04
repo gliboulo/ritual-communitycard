@@ -19,6 +19,8 @@ const descs = [
   "this user will follow you through your API calls"
 ];
 
+let chosenDesc = descs[Math.floor(Math.random() * descs.length)];
+
 // --- Role → Rarity ---
 function getGrade(role) {
   if (["Initiate","Ritualist Ascendant"].includes(role)) return "Common";
@@ -33,11 +35,10 @@ function update() {
   const pseudo = pseudoInput.value || "Unnamed Ritualist";
   const role = roleSelect.value || "Initiate";
   const grade  = getGrade(role);
-  const randomDesc = descs[Math.floor(Math.random() * descs.length)];
 
   pseudoDisplay.textContent = pseudo;
   roleDisplay.innerHTML = `<span class="role">${role}</span> <span class="dot">·</span> <span class="grade">${grade}</span>`;
-  descDisplay.textContent   = randomDesc;
+  descDisplay.textContent = chosenDesc;
 
   rarityPill.textContent = grade;
   rarityPill.className   = "rarity-pill " + grade.toLowerCase();
