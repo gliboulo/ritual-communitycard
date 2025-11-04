@@ -108,28 +108,6 @@ take yours on https://nafyn.github.io/ritual-communitycard/`
   window.open(url, "_blank");
 }
 
-const COUNTER_URL = "https://counterapi.dev/api/nafyns-team-1527/ritual-counter";
-
-// Display initial
-fetch(`https://ritual-counter-proxy.nafnafyng.workers.dev/api/pledge`)
-  .then(res => res.json())
-  .then(data => {
-    document.getElementById("pledgeCount").textContent =
-      `${data.count} initiates have taken the pledge · 🕯️`;
-  });
-
-document.getElementById("pledgeBtn").addEventListener("click", async () => {
-  const res = await fetch(`https://ritual-counter-proxy.nafnafyng.workers.dev/api/pledge/up`, {
-  method: "POST"
-});
-  const data = await res.json();
-
-  document.getElementById("pledgeCount").textContent =
-    `${data.count} initiates have taken the pledge · 🕯️`;
-
-  shareToTwitter();
-});
-
 // --- Create the summoning label ---
 const card = document.getElementById("card");
 const summonSpan = document.createElement("span");
