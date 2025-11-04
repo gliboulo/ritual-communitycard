@@ -281,7 +281,6 @@ input:focus, select:focus {
   color: #C7FFE0;
 }
 
-/* pressed */
 #pledgeBtn:active {
   transform: scale(0.96);
   background: rgba(15, 60, 35, 0.8);
@@ -312,6 +311,7 @@ input:focus, select:focus {
   color: #8af2b8;
   opacity: 0;
   transition: opacity .25s ease;
+  pointer-events: none;
 }
 
 .card.copied {
@@ -323,4 +323,3 @@ input:focus, select:focus {
   50%  { box-shadow: 0 0 18px rgba(120,255,180,0.35); }
   100% { box-shadow: 0 0 0px rgba(120,255,180,0.0); }
 }
-
