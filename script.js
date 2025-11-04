@@ -1,3 +1,4 @@
+// --- Elements ---
 const pseudoInput   = document.getElementById("pseudo");
 const roleSelect    = document.getElementById("role");
 const avatarInput   = document.getElementById("avatarInput");
@@ -8,6 +9,7 @@ const descDisplay   = document.getElementById("descDisplay");
 const avatarPreview = document.getElementById("avatarPreview");
 const rarityPill    = document.getElementById("rarityPill");
 
+// --- Descriptions pool ---
 const descs = [
   "this user lives in the Infernet",
   "this user was born to bring AI computation",
@@ -17,6 +19,7 @@ const descs = [
   "this user will follow you through your API calls"
 ];
 
+// --- Role → Rarity ---
 function getGrade(role) {
   if (["Initiate","Ritualist Ascendant"].includes(role)) return "Common";
   if (["Ritty Bitty","Ritty"].includes(role))           return "Rare";
@@ -25,65 +28,61 @@ function getGrade(role) {
   return "Common";
 }
 
+// --- Update card preview ---
 function update() {
   const pseudo = pseudoInput.value || "Unnamed Ritualist";
-  const role = roleSelect.value;
-  const grade = getGrade(role);
-  const randomDesc = descs[Math.floor(Math.random()*descs.length)];
+  const role   = roleSelect.value;
+  const grade  = getGrade(role);
+  const randomDesc = descs[Math.floor(Math.random() * descs.length)];
 
   pseudoDisplay.textContent = pseudo;
-  roleDisplay.textContent = `${role} · ${grade}`;
-  descDisplay.textContent = randomDesc;
+  roleDisplay.textContent   = `${role} · ${grade}`;
+  descDisplay.textContent   = randomDesc;
 
-  const pill = document.getElementById("rarityPill");
-  pill.textContent = grade;
-  pill.className = "rarity-pill " + grade.toLowerCase();
+  rarityPill.textContent = grade;
+  rarityPill.className   = "rarity-pill " + grade.toLowerCase();
 }
 
-pseudoInput.addEventListener("input",  update);
+pseudoInput.addEventListener("input", update);
 roleSelect.addEventListener("change", update);
 
+// --- Avatar preview ---
 avatarInput.addEventListener("change", () => {
   const f = avatarInput.files?.[0];
   avatarPreview.src = f ? URL.createObjectURL(f) : "pepefront.png";
 });
 
-document.getElementById("pledgeBtn").addEventListener("click", shareToTwitter);
-
-async function uploadToCatbox(blob) {
-  const formData = new FormData();
-  formData.append("reqtype", "fileupload");
-  formData.append("fileToUpload", blob, "card.png");
-
-  const res = await fetch("https://catbox.moe/api.php", {
-    method: "POST",
-    body: formData
-  });
-
-  const url = await res.text();
-  if (!url.startsWith("https://")) {
-    throw new Error("Catbox upload failed: " + url);
-  }
-  return url.trim();
-}
-
-async function shareToTwitter() {
+// --- Copy card to clipboard on click ---
+async function copyCardToClipboard() {
   const card = document.getElementById("card");
-
-  // Convert card → blob
   const blob = await htmlToImage.toBlob(card, { pixelRatio: 2 });
 
-  // Upload to Catbox
-  const imageUrl = await uploadToCatbox(blob);
+  await navigator.clipboard.write([
+    new ClipboardItem({ "image/png": blob })
+  ]);
 
-  // Tweet text
-  const tweetText = encodeURIComponent(
-"i have taken the pledge.\n\nthe ritual grows stronger.\nhttps://nafyn.github.io/ritual-communitycard/"
-    );
-
-  // Open Twitter
-  const tweetUrl = `https://twitter.com/intent/tweet?text=${tweetText}&url=${encodeURIComponent(imageUrl)}`;
-  window.open(tweetUrl, "_blank");
+  // small visual feedback
+  const hint = document.querySelector(".copy-hint");
+  hint.textContent = "copied!";
+  setTimeout(() => hint.textContent = "click to copy", 900);
 }
 
+document.getElementById("card").addEventListener("click", copyCardToClipboard);
+
+// --- Tweet button (no image upload, just text) ---
+function shareToTwitter() {
+  const tweetText = encodeURIComponent(
+`i have taken the pledge.
+
+the ritual grows stronger.
+https://nafyn.github.io/ritual-communitycard/`
+  );
+
+  const url = `https://twitter.com/intent/tweet?text=${tweetText}`;
+  window.open(url, "_blank");
+}
+
+document.getElementById("pledgeBtn").addEventListener("click", shareToTwitter);
+
+// initial draw
 update();
