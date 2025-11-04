@@ -91,9 +91,10 @@ async function copyCardToClipboard() {
     setTimeout(() => {
       feedback.style.opacity = 0;
       card.classList.remove("copied");
+      hint.style.opacity = "";
     }, 750);
 
-  }, 2000); // <<< 3 seconds now
+  }, 2000); // <<< 2 seconds now
 }
 
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
