@@ -108,7 +108,7 @@ take yours on https://nafyn.github.io/ritual-communitycard/`
   window.open(url, "_blank");
 }
 
-const COUNTER_URL = "https://ritual-counter-proxy.nafnafyng.workers.dev/api/pledge";
+const COUNTER_URL = "https://counterapi.dev/api/nafyns-team-1527/ritual-counter";
 
 // Display initial
 fetch(`https://ritual-counter-proxy.nafnafyng.workers.dev/api/pledge`)
