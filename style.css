@@ -344,6 +344,67 @@ input:focus, select:focus {
   }
 }
 
+/* === MOBILE LAYOUT FIX === */
+@media (max-width: 900px) {
+
+  /* Layout devient vertical */
+  .layout {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 120px;
+    gap: 60px;
+  }
+
+  /* Le panneau de création se centre proprement */
+  .controls {
+    transform: none;
+    margin: 0 auto;
+    width: 90%;
+    max-width: 360px;
+  }
+
+  /* La carte se centre et se scale sans écraser */
+  .preview-zone {
+    transform: scale(0.9);
+  }
+
+  /* La carte devient verticale à l’intérieur */
+  .card-inner {
+    grid-template-columns: 1fr;
+    text-align: center;
+    gap: 30px;
+    padding: 40px;
+  }
+
+  /* Avatar taille adaptée mobile */
+  .avatar-wrapper {
+    width: 260px;
+    height: 260px;
+    margin: 0 auto;
+  }
+  .avatar {
+    width: 260px;
+    height: 320px;
+  }
+
+  /* Police adaptées mobile */
+  .pseudo {
+    font-size: 42px;
+  }
+  .role-line {
+    font-size: 22px;
+  }
+  .desc {
+    font-size: 18px;
+  }
+
+  /* Bouton recentré */
+  #pledgeBtn {
+    margin-top: 20px;
+  }
+}
+
 @media (max-width: 700px) {
   .preview-zone .card {
     transform: scale(0.78);
