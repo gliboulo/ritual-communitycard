@@ -426,3 +426,19 @@ select:invalid {
 .card.summoning .copy-hint {
   opacity: 0 !important;
 }
+
+
+.card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity .45s ease;
+  box-shadow: 0 0 40px rgba(12,166,120,.22);
+}
+
+.card:hover::after {
+  opacity: 1;
+}
