@@ -52,7 +52,6 @@ avatarInput.addEventListener("change", () => {
   avatarPreview.src = f ? URL.createObjectURL(f) : "pepefront.png";
 });
 
-// --- Copy card to clipboard on click ---
 async function copyCardToClipboard() {
   const card = document.getElementById("card");
   const blob = await htmlToImage.toBlob(card, { pixelRatio: 2 });
@@ -61,10 +60,14 @@ async function copyCardToClipboard() {
     new ClipboardItem({ "image/png": blob })
   ]);
 
-  // small visual feedback
-  const hint = document.querySelector(".copy-hint");
-  hint.textContent = "copied!";
-  setTimeout(() => hint.textContent = "click to copy", 900);
+  const feedback = document.querySelector(".copy-feedback");
+  card.classList.add("copied");
+  feedback.style.opacity = 1;
+
+  setTimeout(() => {
+    feedback.style.opacity = 0;
+    card.classList.remove("copied");
+  }, 900);
 }
 
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
