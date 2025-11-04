@@ -19,7 +19,9 @@ const descs = [
   "this user will follow you through your API calls"
 ];
 
-let chosenDesc = descs[Math.floor(Math.random() * descs.length)];
+// ✅ Pick description ONCE
+const fixedDesc = descs[Math.floor(Math.random() * descs.length)];
+descDisplay.textContent = fixedDesc;
 
 // --- Role → Rarity ---
 function getGrade(role) {
@@ -38,7 +40,6 @@ function update() {
 
   pseudoDisplay.textContent = pseudo;
   roleDisplay.innerHTML = `<span class="role">${role}</span> <span class="dot">·</span> <span class="grade">${grade}</span>`;
-  descDisplay.textContent = chosenDesc;
 
   rarityPill.textContent = grade;
   rarityPill.className   = "rarity-pill " + grade.toLowerCase();
@@ -53,13 +54,14 @@ avatarInput.addEventListener("change", () => {
   avatarPreview.src = f ? URL.createObjectURL(f) : "pepefront.png";
 });
 
+// --- Copy image to clipboard ---
 async function copyCardToClipboard() {
   const card = document.getElementById("card");
   const cardContent = document.getElementById("cardContent");
   const hint = document.querySelector(".copy-hint");
   const feedback = document.querySelector(".copy-feedback");
 
-  // masque ui pendant capture
+  // hide UI overlays in the screenshot
   card.classList.add("hide-copy-ui");
 
   const blob = await htmlToImage.toBlob(cardContent, {
@@ -67,37 +69,23 @@ async function copyCardToClipboard() {
     backgroundColor: "#0d1512"
   });
 
+  // re-show UI
   card.classList.remove("hide-copy-ui");
 
   await navigator.clipboard.write([
     new ClipboardItem({ "image/png": blob })
   ]);
 
- // --- SEQUENCE ANIMÉE SANS OVERLAP ---
-const originalText = feedback.textContent;
-
-// 0) hide hint instantly so nothing overlaps
-hint.style.opacity = 0;
-
-// 1) show summoning
-feedback.textContent = "[summoning…] ✧⟡";
-feedback.style.opacity = 1;
-
-setTimeout(() => {
-  // 2) switch to copied! + glow
-  feedback.textContent = originalText;
+  // copied animation
   card.classList.add("copied");
-}, 450);
+  feedback.style.opacity = 1;
+  hint.style.opacity = 0;
 
-setTimeout(() => {
-  // 3) fade everything out & restore hover behavior
-  feedback.style.opacity = 0;
-  card.classList.remove("copied");
-  
-  // allow hover to show "click to copy" again
-  // (only once animation ends so no flicker)
-  hint.style.opacity = ""; // reset to CSS-controlled opacity
-}, 1200);
+  setTimeout(() => {
+    feedback.style.opacity = 0;
+    card.classList.remove("copied");
+  }, 700);
+}
 
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
 
@@ -115,5 +103,5 @@ take yours on https://nafyn.github.io/ritual-communitycard/`
 
 document.getElementById("pledgeBtn").addEventListener("click", shareToTwitter);
 
-// initial draw
+// Initial render
 update();
