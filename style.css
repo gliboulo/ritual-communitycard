@@ -104,9 +104,9 @@ body::after {
   flex: 1;
   display: grid;
   grid-template-columns: 350px 1fr;
-  align-items: start; /* ✅ EXACT comme rendu original */
+  align-items: center;
   justify-content: center;
-  padding: 110px 60px 0; /* ✅ on remonte la grille entière au lieu du panneau seul */
+  padding: 80px 60px 0;
 }
 
 .controls {
@@ -119,7 +119,7 @@ body::after {
   background: rgba(255,255,255,.015);
   border: 1px solid rgba(255,255,255,.04);
   backdrop-filter: blur(10px);
-  transform: translateY(-30px); /* ✅ cette fois-ci re-fonctionne, mais stable */
+  transform: translateY(-30px);
 }
 
 input, select {
@@ -233,7 +233,7 @@ input:focus, select:focus {
   border-radius: 999px;
   border: 1px solid rgba(12,166,120,.35);
   background: rgba(12,166,120,.10);
-  color: #0CA678 !important;
+  color: #0CA678;
 }
 
 .brand-mark {
