@@ -54,21 +54,29 @@ avatarInput.addEventListener("change", () => {
 
 async function copyCardToClipboard() {
   const card = document.getElementById("card");
+  const hint = document.querySelector(".copy-hint");
+  const feedback = document.querySelector(".copy-feedback");
+
   const blob = await htmlToImage.toBlob(card, { pixelRatio: 2 });
 
   await navigator.clipboard.write([
     new ClipboardItem({ "image/png": blob })
   ]);
 
-  const feedback = document.querySelector(".copy-feedback");
   card.classList.add("copied");
   feedback.style.opacity = 1;
+  hint.style.opacity = 0; //
 
   setTimeout(() => {
     feedback.style.opacity = 0;
     card.classList.remove("copied");
-  }, 900);
+  }, 700);
+
+  setTimeout(() => {
+    hint.style.opacity = 1; //
+  }, 1000);
 }
+
 
 document.getElementById("card").addEventListener("click", copyCardToClipboard);
 
