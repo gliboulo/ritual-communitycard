@@ -83,8 +83,8 @@ document.getElementById("card").addEventListener("click", copyCardToClipboard);
 // --- Tweet button (no image upload, just text) ---
 function shareToTwitter() {
   const tweetText = encodeURIComponent(
-`i have taken the pledge.
-the ritual grows stronger.
+`i have taken the pledge. the ritual grows stronger 🕯️
+
 take yours on https://nafyn.github.io/ritual-communitycard/`
   );
 
