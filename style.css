@@ -323,10 +323,3 @@ input:focus, select:focus {
   50%  { box-shadow: 0 0 18px rgba(120,255,180,0.35); }
   100% { box-shadow: 0 0 0px rgba(120,255,180,0.0); }
 }
-
-.card-capture-wrap {
-  display: inline-block;
-  border-radius: 24px;
-  overflow: hidden; /* IMPORTANT → coupe l'ombre et l’excédent */
-  background: #0d1610; /* la même couleur que l'intérieur de la carte */
-}
