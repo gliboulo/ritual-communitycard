@@ -1,69 +1,147 @@
-<html lang="en">
+<!DOCTYPE html>
+<html lang="en" class="h-full">
   <head>
-    <meta charset="UTF-8"/>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Ritual Card Generator</title>
-    <link rel="stylesheet"href="style.css"/>
-    <link rel="icon" type="image/svg+xml" href="Black.svg">
-    <link rel="alternate icon" href="Black.png">
-    <link rel="icon" type="image/png" href="Black.png" sizes="32x32">
+    <link rel="icon" type="image/svg+xml" href="Black.svg" />
+    <link rel="icon" type="image/png" href="Black.png" sizes="32x32" />
+    <link rel="alternate icon" href="Black.png" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              deep: '#0b0c0c',
+              card: '#0d1512',
+              foam: '#E7ECEB',
+              primary: '#0CA678',
+              mint: '#8AF2B8'
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif']
+            },
+            boxShadow: {
+              'card-base': '0 30px 70px rgba(0,0,0,0.45)',
+              'card-glow': '0 0 40px rgba(12,166,120,0.22)'
+            },
+            animation: {
+              'pulse-soft': 'pulse-soft 2.8s ease-in-out infinite',
+              'pledge-glow': 'pledgeGlow 3.2s ease-in-out infinite'
+            },
+            keyframes: {
+              'pulse-soft': {
+                '0%, 100%': { boxShadow: '0 0 6px rgba(12,166,120,0.45)', transform: 'scale(1)', opacity: '0.85' },
+                '50%': { boxShadow: '0 0 18px rgba(12,166,120,0.95)', transform: 'scale(1.4)', opacity: '1' }
+              },
+              pledgeGlow: {
+                '0%, 100%': { textShadow: '0 0 6px rgba(140,255,200,0.35)' },
+                '50%': { textShadow: '0 0 18px rgba(140,255,200,0.6)' }
+              }
+            }
+          }
+        },
+        safelist: [
+          'bottom-[38px]',
+          'right-[38px]',
+          'text-[18px]',
+          'text-[#8AF2B8]',
+          'text-white/60',
+          'opacity-40',
+          'mx-1'
+        ]
+      };
+    </script>
+    <link rel="stylesheet" href="style.css" />
   </head>
-  
-  <body>
-    <header class="header">
-      <div class="dot"></div>
-      <span>Ritual Card Generator</span>
-    </header>
-    
-    <div class="layout">
-      <div class="controls">
-        <p>create your ritual card</p>
-        <input id="pseudo" type="text" placeholder="your username">
-        <select id="role" required>
-          <option value="" disabled selected hidden>what’s your DC role?</option>
-          <option>Initiate</option>
-          <option>Ritualist Ascendant</option>
-          <option>Ritty Bitty</option>
-          <option>Ritty</option>
-          <option>Ritualist</option>
-          <option>Zealot</option>
-          <option>Mods</option>
-          <option>Foundation Team</option>
-        </select>
-        
-        <label class="file-label">upload your pfp <input id="avatarInput" type="file" accept="image/*"></label>
+  <body class="relative min-h-screen overflow-x-hidden bg-deep font-sans text-foam antialiased">
+    <header class="pointer-events-none fixed inset-x-0 top-0 z-40 border-b border-white/5 bg-deep/65 px-5 py-4 backdrop-blur-xl">
+      <div class="flex w-full max-w-6xl items-center gap-3 pl-2 text-[11px] sm:pl-4 sm:text-xs md:pl-6 md:text-sm">
+        <span class="dot relative -left-3 h-2.5 w-2.5 origin-center rounded-full bg-primary animate-pulse-soft sm:-left-4 md:-left-5"></span>
+        <span class="text-sm font-semibold text-foam/80 sm:text-base md:text-lg">Ritual Card Generator</span>
       </div>
-      
-      <div class="preview-zone">
-        <div class="card" id="card">
-          <div id="cardContent">
-            <div class="card-inner">
-              <div class="avatar-wrapper"> <img id="avatarPreview" src="pepefront.png" class="avatar" /></div>
-              <div class="info">
-                <p id="pseudoDisplay" class="pseudo"></p>
-                <p id="roleDisplay" class="role-line"></p>
-                <p id="descDisplay" class="desc"></p>
+    </header>
+
+    <main class="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center gap-12 px-4 pb-32 pt-32 lg:flex-row lg:items-start lg:justify-between">
+      <section class="controls glass-panel w-full max-w-sm space-y-6">
+        <p class="text-xs uppercase tracking-[0.45em] text-foam/60">create your ritual card</p>
+
+        <label class="block space-y-2">
+          <span class="text-sm font-medium text-foam/70">username</span>
+          <input id="pseudo" type="text" placeholder="your username" class="w-full rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-foam/70 placeholder:text-foam/45 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 focus:text-foam" />
+        </label>
+
+        <label class="block space-y-2">
+          <span class="text-sm font-medium text-foam/70">what's your DC role?</span>
+          <select id="role" required class="w-full appearance-none rounded-xl border border-white/10 bg-white/5 px-4 py-3 text-sm text-foam/70 transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/40 focus:text-foam">
+            <option value="" disabled selected hidden>choose your role</option>
+            <option>Initiate</option>
+            <option>Ritualist Ascendant</option>
+            <option>Ritty Bitty</option>
+            <option>Ritty</option>
+            <option>Ritualist</option>
+            <option>Zealot</option>
+            <option>Mods</option>
+            <option>Foundation Team</option>
+          </select>
+        </label>
+
+        <label class="block space-y-2">
+          <span class="text-sm font-medium text-foam/70">upload your pfp</span>
+          <span class="group relative flex cursor-pointer items-center justify-between rounded-xl border border-dashed border-white/15 bg-white/5 px-4 py-3 text-sm text-foam/70 transition hover:border-primary/60 hover:text-foam">
+            <span>choose an image</span>
+            <span class="text-xs uppercase tracking-[0.3em] text-foam/40 group-hover:text-primary/70">browse</span>
+            <input id="avatarInput" type="file" accept="image/*" class="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
+          </span>
+        </label>
+      </section>
+
+      <section class="preview-zone flex w-full max-w-2xl flex-col items-center gap-6">
+        <div id="card" class="card group relative w-full max-w-xl rounded-[28px] border border-white/10 bg-card/95 p-1 shadow-card-base transition-transform duration-300 hover:-translate-y-1">
+          <div id="cardContent" class="relative overflow-visible rounded-[24px] border border-white/5 bg-card/90 p-6 sm:p-8">
+            <div class="card-inner flex flex-col gap-8 sm:flex-row sm:items-center">
+              <div class="avatar-column mx-auto flex w-full max-w-[240px] flex-col items-center sm:mx-0 sm:max-w-[260px]">
+                <div class="avatar-wrapper relative flex aspect-square w-full items-center justify-center overflow-visible">
+                  <div class="avatar-inner flex h-full w-full items-center justify-center overflow-hidden rounded-[26px] border border-white/10 bg-black/20 shadow-inner">
+                    <img id="avatarPreview" src="pepefront.png" alt="ritual avatar preview" class="avatar h-full w-full object-cover transition-transform duration-500" />
+                  </div>
+                  <img src="Translucent.svg" alt="ritual brand mark" class="brand-mark pointer-events-none absolute left-1/2 -top-10 w-20 -translate-x-1/2 opacity-80 drop-shadow-[0_0_18px_rgba(12,166,120,0.35)] sm:-top-12 sm:w-24" />
+                </div>
+              </div>
+
+              <div class="info flex flex-1 flex-col justify-center gap-4 text-center text-foam sm:text-left">
+                <p id="pseudoDisplay" class="pseudo text-2xl font-semibold tracking-tight sm:text-3xl"></p>
+                <p id="roleDisplay" class="role-line text-sm font-medium text-foam/70 sm:text-base"></p>
+                <p id="descDisplay" class="desc text-sm italic leading-relaxed text-foam/60 sm:text-base"></p>
               </div>
             </div>
-            
-            <div id="rarityPill" class="rarity-pill common">Common</div>
-            <img src="Translucent.svg" class="brand-mark" />
+
+            <div id="rarityPill" class="rarity-pill absolute right-6 top-6 rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.35em] text-primary shadow-card-glow transition duration-300 group-hover:shadow-lg"></div>
           </div>
-          
-          <!-- ✅ Ces deux doivent être en dehors = ne seront pas capturés -->
-          <span class="copy-hint">click to copy</span>
-          <span class="copy-feedback">copied!</span>
+
+          <span class="copy-hint pointer-events-none absolute right-8 bottom-8 text-xs uppercase text-foam/35 transition group-hover:text-foam/70">click to copy</span>
+          <span class="copy-feedback pointer-events-none absolute right-8 bottom-8 text-xs font-medium text-mint opacity-0 transition">copied</span>
         </div>
-        
-        <!-- ✅ Bouton maintenant placé au bon endroit -->
-        <button id="pledgeBtn">pledge to the ritual</button>
+
+        <button id="pledgeBtn" class="inline-flex items-center justify-center rounded-full bg-primary px-8 py-3 text-sm font-semibold uppercase tracking-[0.35em] text-deep transition hover:bg-primary/90 focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/60">
+          pledge to the ritual
+        </button>
+      </section>
+    </main>
+
+    <footer class="footer pointer-events-none fixed inset-x-0 bottom-6 z-40 px-6">
+      <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 text-sm text-foam/70 sm:flex-row sm:items-center sm:justify-between">
+        <a href="https://x.com/pince_croco" target="_blank" class="pointer-events-auto text-foam/70 transition hover:text-primary">built by pince croco</a>
+        <span id="pledgeCount" class="pledge-counter pointer-events-auto text-mint animate-pledge-glow">will you take the pledge? 🕯️</span>
       </div>
-      
-      <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
-      <script src="script.js"></script>
-      
-      <footer class="footer">
-        <a href="https://x.com/pince_croco" target="_blank">built by pince croco</a>
-        <span id="pledgeCount" class="pledge-counter">will you take the pledge? 🕯️</span>
-      </footer>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
+

@@ -8,6 +8,15 @@ const roleDisplay   = document.getElementById("roleDisplay");
 const descDisplay   = document.getElementById("descDisplay");
 const avatarPreview = document.getElementById("avatarPreview");
 const rarityPill    = document.getElementById("rarityPill");
+const cardElement   = document.getElementById("card");
+const copyHint      = document.querySelector(".copy-hint");
+const copyFeedback  = document.querySelector(".copy-feedback");
+const copyHintDefaultText = copyHint ? copyHint.textContent : "click to copy";
+const copyHintDefaultColor = copyHint ? getComputedStyle(copyHint).color : "";
+
+cardElement.setAttribute("role", "button");
+cardElement.setAttribute("tabindex", "0");
+cardElement.setAttribute("aria-label", "Copy your ritual card to the clipboard");
 
 // --- Descriptions pool ---
 const descs = [
@@ -19,98 +28,232 @@ const descs = [
   "this user will follow you through your API calls"
 ];
 
-// ✅ Pick description ONCE
 descDisplay.textContent = descs[Math.floor(Math.random() * descs.length)];
 
-// --- Role → Rarity ---
+// --- Role to Rarity ---
 function getGrade(role) {
-  if (["Initiate","Ritualist Ascendant"].includes(role)) return "Common";
-  if (["Ritty Bitty","Ritty"].includes(role))           return "Rare";
-  if (["Ritualist","Zealot"].includes(role))            return "Legendary";
-  if (["Mods","Foundation Team"].includes(role))        return "Epic";
+  if (["Initiate", "Ritualist Ascendant"].includes(role)) return "Common";
+  if (["Ritty Bitty", "Ritty"].includes(role))            return "Rare";
+  if (["Ritualist", "Zealot"].includes(role))             return "Legendary";
+  if (["Mods", "Foundation Team"].includes(role))         return "Epic";
   return "Common";
 }
 
 // --- Update card preview ---
 function update() {
-  const pseudo = pseudoInput.value || "Unnamed Ritualist";
+  const pseudo = pseudoInput.value.trim() || "Unnamed Ritualist";
   const role = roleSelect.value || "Initiate";
-  const grade  = getGrade(role);
+  const grade = getGrade(role);
 
   pseudoDisplay.textContent = pseudo;
-
-  // Role + rarity rendered inline
   roleDisplay.innerHTML = `
-    <span class="text-acc">${role}</span>
-    <span class="opacity-40 mx-1">·</span>
-    <span class="text-white/60">${grade}</span>
+    <span class="font-semibold text-primary">${role}</span>
+    <span class="mx-1 text-foam/40">&bull;</span>
+    <span class="text-primary">${grade}</span>
   `;
 
   rarityPill.textContent = grade;
 }
+
 pseudoInput.addEventListener("input", update);
 roleSelect.addEventListener("change", update);
 
 // --- Avatar preview ---
 avatarInput.addEventListener("change", () => {
-  const f = avatarInput.files?.[0];
-  avatarPreview.src = f ? URL.createObjectURL(f) : "pepefront.png";
+  const file = avatarInput.files?.[0];
+  avatarPreview.src = file ? URL.createObjectURL(file) : "pepefront.png";
 });
+
+function buildExportCard() {
+  const clone = cardElement.cloneNode(true);
+  clone.removeAttribute("id");
+  clone.style.transform = "none";
+  clone.style.transition = "none";
+  clone.style.boxShadow = "none";
+  clone.style.cursor = "default";
+  clone.style.width = `${cardElement.offsetWidth}px`;
+  clone.style.height = `${cardElement.offsetHeight}px`;
+  clone.classList.remove("group");
+
+  clone.querySelectorAll(".copy-hint, .copy-feedback, .copy-summon").forEach(el => el.remove());
+
+  return clone;
+}
+
+async function renderCardImage() {
+  const exportNode = buildExportCard();
+  const container = document.createElement("div");
+  container.style.position = "fixed";
+  container.style.pointerEvents = "none";
+  container.style.left = "-9999px";
+  container.appendChild(exportNode);
+  document.body.appendChild(container);
+
+  const options = {
+    pixelRatio: 2,
+    backgroundColor: "#0d1512",
+    cacheBust: true,
+    quality: 1,
+    useCORS: true
+  };
+
+  const cleanup = () => {
+    if (container.parentNode) container.parentNode.removeChild(container);
+  };
+
+  try {
+    const blob = await htmlToImage.toBlob(exportNode, options);
+    if (blob) {
+      const dataUrl = await blobToDataUrl(blob);
+      return { blob, dataUrl, cleanup };
+    }
+  } catch (err) {
+    console.error("toBlob failed", err);
+  }
+
+  try {
+    const dataUrl = await htmlToImage.toPng(exportNode, options);
+    return { blob: null, dataUrl, cleanup };
+  } catch (err) {
+    console.error("toPng failed", err);
+  }
+
+  try {
+    const canvas = await htmlToImage.toCanvas(exportNode, options);
+    const dataUrl = canvas.toDataURL("image/png");
+    let blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
+    if (!blob) blob = await dataUrlToBlob(dataUrl);
+    return { blob, dataUrl, cleanup };
+  } catch (err) {
+    console.error("toCanvas failed", err);
+  }
+
+  try {
+    const svgUrl = await htmlToImage.toSvg(exportNode, options);
+    const blob = await dataUrlToBlob(svgUrl);
+    return { blob, dataUrl: svgUrl, cleanup };
+  } catch (err) {
+    console.error("toSvg failed", err);
+  }
+
+  cleanup();
+  throw new Error("Unable to render ritual card image");
+}
+
+function blobToDataUrl(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+function dataUrlToBlob(dataUrl) {
+  return fetch(dataUrl).then(response => response.blob());
+}
 
 // --- Copy card to clipboard ---
 async function copyCardToClipboard() {
-  const card       = document.getElementById("card");
-  const hint       = document.querySelector(".copy-hint");
-  const feedback   = document.querySelector(".copy-feedback");
-  const summon     = document.querySelector(".copy-summon");
-  const cardContent = card.cloneNode(true);
+  const summon = document.querySelector(".copy-summon");
 
-  // Remove UI overlays
-  hint.style.opacity = "0";
-  summon.style.opacity = "0";
-  feedback.style.opacity = "0";
+  if (copyHint) {
+    copyHint.textContent = copyHintDefaultText;
+    copyHint.style.color = copyHintDefaultColor;
+    copyHint.style.opacity = "0";
+  }
+  if (summon) summon.style.opacity = "0";
+  if (copyFeedback) copyFeedback.style.opacity = "0";
 
-  // Create clean export wrapper
-  const temp = document.createElement("div");
-  temp.style.position = "fixed";
-  temp.style.left = "-9999px";
-  temp.appendChild(cardContent);
-  document.body.appendChild(temp);
+  let copySucceeded = false;
+  let imageDataUrl = null;
+  let imageBlob = null;
+  let cleanup;
 
-  const blob = await htmlToImage.toBlob(cardContent, {
-    pixelRatio: 2,
-    backgroundColor: "#0d1512"
-  });
+  try {
+    const renderResult = await renderCardImage();
+    cleanup = renderResult.cleanup;
+    imageDataUrl = renderResult.dataUrl;
+    imageBlob = renderResult.blob;
 
-  document.body.removeChild(temp);
-  await navigator.clipboard.write([ new ClipboardItem({ "image/png": blob }) ]);
+    if (imageBlob && navigator.clipboard && window.ClipboardItem) {
+      await navigator.clipboard.write([new ClipboardItem({ [imageBlob.type || "image/png"]: imageBlob })]);
+      copySucceeded = true;
+    } else if (imageDataUrl && navigator.clipboard && window.ClipboardItem) {
+      const response = await fetch(imageDataUrl);
+      const blob = await response.blob();
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
+      copySucceeded = true;
+    }
+  } catch (error) {
+    console.error("Failed to render ritual card image:", error);
+  } finally {
+    if (cleanup) cleanup();
+  }
 
-  // Summoning animation
-  card.classList.add("summoning");
-  summon.style.opacity = 1;
+  if (!copySucceeded && imageDataUrl) {
+    const popup = window.open(imageDataUrl, "_blank", "noopener,noreferrer");
+    if (!popup) {
+      const downloadLink = document.createElement("a");
+      downloadLink.href = imageDataUrl;
+      downloadLink.download = "ritual-card.png";
+      downloadLink.click();
+    }
+  }
+
+  if (!copySucceeded && !imageDataUrl) {
+    if (copyHint) {
+      copyHint.textContent = "copy failed";
+      copyHint.style.color = "#F87171";
+      copyHint.style.opacity = "1";
+    }
+    return;
+  }
+
+  cardElement.classList.add("summoning");
+  if (summon) summon.style.opacity = "1";
 
   setTimeout(() => {
-    summon.style.opacity = 0;
-    card.classList.remove("summoning");
+    if (summon) summon.style.opacity = "0";
+    cardElement.classList.remove("summoning");
 
-    card.classList.add("copied");
-    feedback.style.opacity = 1;
+    cardElement.classList.add("copied");
+
+    if (copyHint) {
+      if (copySucceeded) {
+        copyHint.textContent = "copied";
+        copyHint.style.color = "#8AF2B8";
+      } else {
+        copyHint.textContent = "image ready";
+        copyHint.style.color = "#FBBF24";
+      }
+      copyHint.style.opacity = "1";
+    }
 
     setTimeout(() => {
-      feedback.style.opacity = 0;
-      card.classList.remove("copied");
-      hint.style.opacity = "";
-    }, 750);
-
+      cardElement.classList.remove("copied");
+      if (copyFeedback) copyFeedback.style.opacity = "0";
+      if (copyHint) {
+        copyHint.textContent = copyHintDefaultText;
+        copyHint.style.color = copyHintDefaultColor;
+        copyHint.style.opacity = "1";
+      }
+    }, 800);
   }, 2000);
 }
 
-document.getElementById("card").addEventListener("click", copyCardToClipboard);
+cardElement.addEventListener("click", copyCardToClipboard);
+cardElement.addEventListener("keydown", event => {
+  if (event.key === "Enter" || event.key === " ") {
+    event.preventDefault();
+    copyCardToClipboard();
+  }
+});
 
 // --- Tweet button ---
 document.getElementById("pledgeBtn").addEventListener("click", () => {
   const tweetText = encodeURIComponent(
-`i have taken the pledge. the ritual grows stronger 🕯️
+`i have taken the pledge. the ritual grows stronger🕯️
 
 take yours on https://nafyn.github.io/ritual-communitycard/`
   );
@@ -118,12 +261,22 @@ take yours on https://nafyn.github.io/ritual-communitycard/`
 });
 
 // --- Create the summoning label if missing ---
-if (!document.querySelector(".copy-summon")) {
-  const card = document.getElementById("card");
-  const summonSpan = document.createElement("span");
-  summonSpan.className = "copy-summon absolute bottom-[38px] right-[38px] text-[18px] text-[#8AF2B8] opacity-0 pointer-events-none";
-  summonSpan.textContent = "[ summoning… ] ✧⟡";
-  card.appendChild(summonSpan);
+const summonClass = "copy-summon absolute bottom-[38px] right-[38px] text-xs font-medium text-[#8AF2B8] opacity-0 pointer-events-none";
+const summonMessage = "summoning… ✧⟡";
+
+let copySummon = document.querySelector(".copy-summon");
+if (!copySummon) {
+  copySummon = document.createElement("span");
+  cardElement.appendChild(copySummon);
 }
 
+copySummon.className = summonClass;
+copySummon.textContent = summonMessage;
+
 update();
+
+
+
+
+
+
