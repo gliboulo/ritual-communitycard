@@ -129,6 +129,16 @@ async function ensureCardImagesReady() {
   await Promise.all(loadPromises);
 }
 
+async function waitForExportNodeReady(node) {
+  if (!node) return;
+
+  const images = node.querySelectorAll("img");
+  await Promise.all(Array.from(images).map(waitForImageLoad));
+
+  await new Promise(requestAnimationFrame);
+  await new Promise(requestAnimationFrame);
+}
+
 function buildExportCard() {
   const clone = cardElement.cloneNode(true);
   clone.removeAttribute("id");
@@ -148,6 +158,11 @@ function buildExportCard() {
 async function renderCardImage() {
   await ensureCardImagesReady();
 
+  const hasInlineImages = Array.from(cardElement.querySelectorAll("img")).some(img => {
+    const src = img.currentSrc || img.src || "";
+    return src.startsWith("data:") || src.startsWith("blob:");
+  });
+
   const exportNode = buildExportCard();
   const container = document.createElement("div");
   container.style.position = "fixed";
@@ -156,12 +171,14 @@ async function renderCardImage() {
   container.appendChild(exportNode);
   document.body.appendChild(container);
 
+  await waitForExportNodeReady(exportNode);
+
   const options = {
     pixelRatio: 2,
     backgroundColor: "#0d1512",
     cacheBust: true,
     quality: 1,
-    useCORS: true
+    useCORS: !hasInlineImages
   };
 
   const cleanup = () => {
