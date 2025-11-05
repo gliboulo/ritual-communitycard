@@ -13,6 +13,7 @@ const copyHint      = document.querySelector(".copy-hint");
 const copyFeedback  = document.querySelector(".copy-feedback");
 const copyHintDefaultText = copyHint ? copyHint.textContent : "click to copy";
 const copyHintDefaultColor = copyHint ? getComputedStyle(copyHint).color : "";
+const defaultAvatarSrc = avatarPreview ? avatarPreview.getAttribute("src") : "";
 
 cardElement.setAttribute("role", "button");
 cardElement.setAttribute("tabindex", "0");
@@ -61,8 +62,72 @@ roleSelect.addEventListener("change", update);
 // --- Avatar preview ---
 avatarInput.addEventListener("change", () => {
   const file = avatarInput.files?.[0];
-  avatarPreview.src = file ? URL.createObjectURL(file) : "pepefront.png";
+
+  if (!file) {
+    avatarPreview.src = defaultAvatarSrc || "pepefront.png";
+    avatarPreview.removeAttribute("data-uploaded-src");
+    return;
+  }
+
+  if (!file.type.startsWith("image/")) {
+    avatarPreview.src = defaultAvatarSrc || "pepefront.png";
+    avatarPreview.removeAttribute("data-uploaded-src");
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = event => {
+    if (avatarInput.files?.[0] !== file) return;
+
+    const result = event.target?.result;
+    if (typeof result === "string" && result.startsWith("data:image")) {
+      avatarPreview.src = result;
+      avatarPreview.setAttribute("data-uploaded-src", "true");
+    } else {
+      avatarPreview.src = defaultAvatarSrc || "pepefront.png";
+      avatarPreview.removeAttribute("data-uploaded-src");
+    }
+  };
+  reader.onerror = () => {
+    avatarPreview.src = defaultAvatarSrc || "pepefront.png";
+    avatarPreview.removeAttribute("data-uploaded-src");
+  };
+  reader.readAsDataURL(file);
 });
+
+function waitForImageLoad(img) {
+  if (!img) return Promise.resolve();
+
+  if (img.complete && img.naturalWidth !== 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise(resolve => {
+    const handleLoad = () => {
+      cleanup();
+      resolve();
+    };
+
+    const handleError = () => {
+      cleanup();
+      resolve();
+    };
+
+    const cleanup = () => {
+      img.removeEventListener("load", handleLoad);
+      img.removeEventListener("error", handleError);
+    };
+
+    img.addEventListener("load", handleLoad, { once: true });
+    img.addEventListener("error", handleError, { once: true });
+  });
+}
+
+async function ensureCardImagesReady() {
+  const images = cardElement.querySelectorAll("img");
+  const loadPromises = Array.from(images).map(waitForImageLoad);
+  await Promise.all(loadPromises);
+}
 
 function buildExportCard() {
   const clone = cardElement.cloneNode(true);
@@ -81,6 +146,8 @@ function buildExportCard() {
 }
 
 async function renderCardImage() {
+  await ensureCardImagesReady();
+
   const exportNode = buildExportCard();
   const container = document.createElement("div");
   container.style.position = "fixed";
