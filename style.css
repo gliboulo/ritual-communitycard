@@ -143,14 +143,14 @@ body::after {
 }
 
 .card.export-mode #cardContent {
-  padding: 2.5rem 2.75rem;
+  padding: 2rem;
 }
 
 .card.export-mode .card-inner {
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 2.5rem;
+  gap: 2rem;
 }
 
 .card.export-mode .avatar-column {
@@ -165,11 +165,11 @@ body::after {
 
 .card.export-mode #rarityPill {
   position: absolute;
-  right: 2.75rem;
-  top: 2.5rem;
+  right: 1.5rem;
+  top: 1.5rem;
   align-self: auto;
   max-width: none;
-  padding-inline: 1.5rem;
+  padding-inline: 1rem;
 }
 
 @media (max-width: 1024px) {

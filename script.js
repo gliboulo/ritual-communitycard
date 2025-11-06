@@ -7,6 +7,7 @@ const pseudoDisplay = document.getElementById("pseudoDisplay");
 const roleDisplay   = document.getElementById("roleDisplay");
 const descDisplay   = document.getElementById("descDisplay");
 const avatarPreview = document.getElementById("avatarPreview");
+const avatarInner   = document.querySelector(".avatar-inner");
 const rarityPill    = document.getElementById("rarityPill");
 const cardElement   = document.getElementById("card");
 const copyCardBtn   = document.getElementById("copyCardBtn");
@@ -27,12 +28,21 @@ if (iosDevice && copyHint) {
 if (avatarPreview) {
   const initialSrc = avatarPreview.currentSrc || avatarPreview.src || defaultAvatarSrc || "pepefront.png";
   avatarPreview.dataset.exportSrc = initialSrc;
+  if (avatarInner) {
+    avatarInner.style.backgroundImage = `url("${initialSrc}")`;
+    avatarInner.style.backgroundPosition = "center";
+    avatarInner.style.backgroundSize = "cover";
+    avatarInner.style.backgroundRepeat = "no-repeat";
+  }
 }
 
 function setAvatarPreviewSource(src, uploaded) {
   if (!avatarPreview) return;
   avatarPreview.src = src;
   avatarPreview.dataset.exportSrc = src;
+  if (avatarInner) {
+    avatarInner.style.backgroundImage = `url("${src}")`;
+  }
   if (uploaded) {
     avatarPreview.setAttribute("data-uploaded-src", "true");
   } else {
@@ -190,6 +200,16 @@ function buildExportCard() {
     const originalStyles = window.getComputedStyle(originalAvatar);
     cloneAvatar.style.objectFit = originalStyles.objectFit || "cover";
     cloneAvatar.style.objectPosition = originalStyles.objectPosition || "center";
+  }
+
+  const originalAvatarInner = document.querySelector(".avatar-inner");
+  const cloneAvatarInner = clone.querySelector(".avatar-inner");
+  if (originalAvatarInner && cloneAvatarInner) {
+    const backgroundImage = originalAvatarInner.style.backgroundImage;
+    if (backgroundImage) cloneAvatarInner.style.backgroundImage = backgroundImage;
+    cloneAvatarInner.style.backgroundPosition = originalAvatarInner.style.backgroundPosition || "center";
+    cloneAvatarInner.style.backgroundSize = originalAvatarInner.style.backgroundSize || "cover";
+    cloneAvatarInner.style.backgroundRepeat = "no-repeat";
   }
 
   return clone;
