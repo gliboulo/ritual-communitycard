@@ -17,6 +17,7 @@ let copyHintDefaultText = copyHint ? copyHint.textContent : "click to copy";
 let copyHintDefaultColor = copyHint ? getComputedStyle(copyHint).color : "";
 const defaultAvatarSrc = avatarPreview ? avatarPreview.getAttribute("src") : "";
 const iosDevice = isIOSDevice();
+const avatarPreloads = [];
 
 if (iosDevice && copyHint) {
   copyHintDefaultText = "tap the copy button";
@@ -43,6 +44,10 @@ function setAvatarPreviewSource(src, uploaded) {
   if (avatarInner) {
     avatarInner.style.backgroundImage = `url("${src}")`;
   }
+  const preloader = new Image();
+  preloader.src = src;
+  avatarPreloads.push(preloader);
+
   if (uploaded) {
     avatarPreview.setAttribute("data-uploaded-src", "true");
   } else {
@@ -182,7 +187,7 @@ function buildExportCard() {
   clone.style.boxShadow = "none";
   clone.style.cursor = "default";
   clone.classList.add("export-mode");
-  const exportWidth = 720;
+  const exportWidth = 576;
   clone.style.width = `${exportWidth}px`;
   clone.style.maxWidth = `${exportWidth}px`;
   clone.style.minWidth = `${exportWidth}px`;
@@ -193,23 +198,27 @@ function buildExportCard() {
 
   const originalAvatar = document.getElementById("avatarPreview");
   const cloneAvatar = clone.querySelector("#avatarPreview");
-  if (originalAvatar && cloneAvatar) {
+  const originalAvatarInner = document.querySelector(".avatar-inner");
+  const cloneAvatarInner = clone.querySelector(".avatar-inner");
+
+  if (originalAvatarInner && cloneAvatarInner) {
+    const innerStyles = window.getComputedStyle(originalAvatarInner);
+    cloneAvatarInner.style.backgroundImage = innerStyles.backgroundImage;
+    cloneAvatarInner.style.backgroundPosition = innerStyles.backgroundPosition;
+    cloneAvatarInner.style.backgroundSize = innerStyles.backgroundSize;
+    cloneAvatarInner.style.backgroundRepeat = innerStyles.backgroundRepeat;
+    cloneAvatarInner.style.backgroundColor = innerStyles.backgroundColor;
+  }
+
+  if (cloneAvatarInner && cloneAvatar) {
+    cloneAvatar.remove();
+  } else if (originalAvatar && cloneAvatar) {
     const avatarSrc = originalAvatar.dataset.exportSrc || originalAvatar.currentSrc || originalAvatar.src;
     if (avatarSrc) cloneAvatar.src = avatarSrc;
     cloneAvatar.removeAttribute("srcset");
     const originalStyles = window.getComputedStyle(originalAvatar);
     cloneAvatar.style.objectFit = originalStyles.objectFit || "cover";
     cloneAvatar.style.objectPosition = originalStyles.objectPosition || "center";
-  }
-
-  const originalAvatarInner = document.querySelector(".avatar-inner");
-  const cloneAvatarInner = clone.querySelector(".avatar-inner");
-  if (originalAvatarInner && cloneAvatarInner) {
-    const backgroundImage = originalAvatarInner.style.backgroundImage;
-    if (backgroundImage) cloneAvatarInner.style.backgroundImage = backgroundImage;
-    cloneAvatarInner.style.backgroundPosition = originalAvatarInner.style.backgroundPosition || "center";
-    cloneAvatarInner.style.backgroundSize = originalAvatarInner.style.backgroundSize || "cover";
-    cloneAvatarInner.style.backgroundRepeat = "no-repeat";
   }
 
   return clone;
