@@ -135,6 +135,43 @@ body::after {
   transition: opacity 0.35s ease, text-shadow 0.35s ease;
 }
 
+.card.export-mode {
+  width: 720px;
+  max-width: 720px;
+  min-width: 720px;
+  margin: 0;
+}
+
+.card.export-mode #cardContent {
+  padding: 2.5rem 2.75rem;
+}
+
+.card.export-mode .card-inner {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 2.5rem;
+}
+
+.card.export-mode .avatar-column {
+  margin: 0;
+  max-width: 260px;
+}
+
+.card.export-mode .info {
+  text-align: left;
+  align-items: flex-start;
+}
+
+.card.export-mode #rarityPill {
+  position: absolute;
+  right: 2.75rem;
+  top: 2.5rem;
+  align-self: auto;
+  max-width: none;
+  padding-inline: 1.5rem;
+}
+
 @media (max-width: 1024px) {
   .glass-panel {
     margin-top: 1rem;

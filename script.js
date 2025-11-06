@@ -24,6 +24,22 @@ if (iosDevice && copyHint) {
   copyHint.style.opacity = "1";
 }
 
+if (avatarPreview) {
+  const initialSrc = avatarPreview.currentSrc || avatarPreview.src || defaultAvatarSrc || "pepefront.png";
+  avatarPreview.dataset.exportSrc = initialSrc;
+}
+
+function setAvatarPreviewSource(src, uploaded) {
+  if (!avatarPreview) return;
+  avatarPreview.src = src;
+  avatarPreview.dataset.exportSrc = src;
+  if (uploaded) {
+    avatarPreview.setAttribute("data-uploaded-src", "true");
+  } else {
+    avatarPreview.removeAttribute("data-uploaded-src");
+  }
+}
+
 cardElement.setAttribute("role", "button");
 cardElement.setAttribute("tabindex", "0");
 cardElement.setAttribute("aria-label", "Copy your ritual card to the clipboard");
@@ -71,16 +87,15 @@ roleSelect.addEventListener("change", update);
 // --- Avatar preview ---
 avatarInput.addEventListener("change", () => {
   const file = avatarInput.files?.[0];
+  const fallbackSrc = defaultAvatarSrc || "pepefront.png";
 
   if (!file) {
-    avatarPreview.src = defaultAvatarSrc || "pepefront.png";
-    avatarPreview.removeAttribute("data-uploaded-src");
+    setAvatarPreviewSource(fallbackSrc, false);
     return;
   }
 
   if (!file.type.startsWith("image/")) {
-    avatarPreview.src = defaultAvatarSrc || "pepefront.png";
-    avatarPreview.removeAttribute("data-uploaded-src");
+    setAvatarPreviewSource(fallbackSrc, false);
     return;
   }
 
@@ -90,16 +105,13 @@ avatarInput.addEventListener("change", () => {
 
     const result = event.target?.result;
     if (typeof result === "string" && result.startsWith("data:image")) {
-      avatarPreview.src = result;
-      avatarPreview.setAttribute("data-uploaded-src", "true");
+      setAvatarPreviewSource(result, true);
     } else {
-      avatarPreview.src = defaultAvatarSrc || "pepefront.png";
-      avatarPreview.removeAttribute("data-uploaded-src");
+      setAvatarPreviewSource(fallbackSrc, false);
     }
   };
   reader.onerror = () => {
-    avatarPreview.src = defaultAvatarSrc || "pepefront.png";
-    avatarPreview.removeAttribute("data-uploaded-src");
+    setAvatarPreviewSource(fallbackSrc, false);
   };
   reader.readAsDataURL(file);
 });
@@ -159,8 +171,8 @@ function buildExportCard() {
   clone.style.transition = "none";
   clone.style.boxShadow = "none";
   clone.style.cursor = "default";
-  const cardRect = cardElement.getBoundingClientRect();
-  const exportWidth = Math.max(576, Math.round(cardRect.width));
+  clone.classList.add("export-mode");
+  const exportWidth = 720;
   clone.style.width = `${exportWidth}px`;
   clone.style.maxWidth = `${exportWidth}px`;
   clone.style.minWidth = `${exportWidth}px`;
@@ -172,57 +184,12 @@ function buildExportCard() {
   const originalAvatar = document.getElementById("avatarPreview");
   const cloneAvatar = clone.querySelector("#avatarPreview");
   if (originalAvatar && cloneAvatar) {
-    const avatarSrc = originalAvatar.currentSrc || originalAvatar.src;
-    if (avatarSrc) {
-      cloneAvatar.crossOrigin = "anonymous";
-      cloneAvatar.src = avatarSrc;
-      cloneAvatar.setAttribute("data-export-src", avatarSrc);
-    }
+    const avatarSrc = originalAvatar.dataset.exportSrc || originalAvatar.currentSrc || originalAvatar.src;
+    if (avatarSrc) cloneAvatar.src = avatarSrc;
     cloneAvatar.removeAttribute("srcset");
-  }
-
-  if (typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches) {
-    const content = clone.querySelector("#cardContent");
-    if (content) {
-      content.style.display = "block";
-      content.style.flexDirection = "";
-      content.style.gap = "";
-      content.style.padding = "2rem";
-      content.style.paddingBottom = "2rem";
-    }
-
-    const cardInner = clone.querySelector(".card-inner");
-    if (cardInner) {
-      cardInner.style.display = "flex";
-      cardInner.style.flexDirection = "row";
-      cardInner.style.alignItems = "center";
-      cardInner.style.justifyContent = "flex-start";
-      cardInner.style.gap = "2rem";
-      cardInner.style.order = "0";
-    }
-
-    const avatarColumn = clone.querySelector(".avatar-column");
-    if (avatarColumn) {
-      avatarColumn.style.margin = "0";
-      avatarColumn.style.maxWidth = "260px";
-    }
-
-    const infoColumn = clone.querySelector(".info");
-    if (infoColumn) {
-      infoColumn.style.textAlign = "left";
-      infoColumn.style.alignItems = "flex-start";
-    }
-
-    const rarityPill = clone.querySelector("#rarityPill");
-    if (rarityPill) {
-      rarityPill.style.position = "absolute";
-      rarityPill.style.right = "1.5rem";
-      rarityPill.style.top = "1.5rem";
-      rarityPill.style.alignSelf = "auto";
-      rarityPill.style.maxWidth = "none";
-      rarityPill.style.paddingInline = "1rem";
-      rarityPill.style.textAlign = "center";
-    }
+    const originalStyles = window.getComputedStyle(originalAvatar);
+    cloneAvatar.style.objectFit = originalStyles.objectFit || "cover";
+    cloneAvatar.style.objectPosition = originalStyles.objectPosition || "center";
   }
 
   return clone;
