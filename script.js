@@ -237,6 +237,139 @@ function dataUrlToBlob(dataUrl) {
   return fetch(dataUrl).then(response => response.blob());
 }
 
+function isModernImageClipboardAvailable() {
+  return typeof navigator !== "undefined" &&
+    !!navigator.clipboard &&
+    typeof window.ClipboardItem !== "undefined";
+}
+
+async function ensureClipboardWriteAllowed() {
+  if (!navigator.permissions || !navigator.permissions.query) return true;
+
+  try {
+    const result = await navigator.permissions.query({ name: "clipboard-write" });
+    return result.state === "granted" || result.state === "prompt";
+  } catch (error) {
+    console.debug("clipboard-write permission check unavailable:", error);
+    return true;
+  }
+}
+
+async function writeBlobToClipboard(blob) {
+  if (!blob) return false;
+
+  const pngBlob = blob.type === "image/png" ? blob : new Blob([blob], { type: "image/png" });
+  try {
+    const clipboardItem = new ClipboardItem({ "image/png": pngBlob });
+    await navigator.clipboard.write([clipboardItem]);
+    return true;
+  } catch (error) {
+    console.error("Modern clipboard write failed:", error);
+    return false;
+  }
+}
+
+async function attemptModernClipboardCopy(blob, dataUrl) {
+  if (!isModernImageClipboardAvailable()) return false;
+  const permissionOk = await ensureClipboardWriteAllowed();
+  if (!permissionOk) return false;
+
+  if (blob) {
+    const blobCopy = await writeBlobToClipboard(blob);
+    if (blobCopy) return true;
+  }
+
+  if (dataUrl) {
+    try {
+      const dataBlob = await dataUrlToBlob(dataUrl);
+      const blobCopy = await writeBlobToClipboard(dataBlob);
+      if (blobCopy) return true;
+    } catch (error) {
+      console.error("Clipboard write from data URL failed:", error);
+    }
+  }
+
+  return false;
+}
+
+function legacyCopyImageFromDataUrl(dataUrl) {
+  if (!dataUrl) return Promise.resolve(false);
+  if (!document.queryCommandSupported || !document.queryCommandSupported("copy")) {
+    return Promise.resolve(false);
+  }
+
+  return new Promise(resolve => {
+    const img = new Image();
+    img.decoding = "async";
+    img.src = dataUrl;
+
+    const cleanup = container => {
+      const selection = window.getSelection();
+      if (selection) selection.removeAllRanges();
+      if (container && container.parentNode) container.parentNode.removeChild(container);
+    };
+
+    img.onload = () => {
+      const container = document.createElement("div");
+      container.contentEditable = "true";
+      container.style.position = "fixed";
+      container.style.left = "-9999px";
+      container.style.opacity = "0";
+      container.style.pointerEvents = "none";
+
+      const wrapper = document.createElement("div");
+      wrapper.appendChild(img);
+      container.appendChild(wrapper);
+      container.setAttribute("tabindex", "-1");
+      try {
+        container.focus({ preventScroll: true });
+      } catch (error) {
+        console.debug("Legacy container focus failed:", error);
+      }
+      document.body.appendChild(container);
+
+      const selection = window.getSelection();
+      if (!selection) {
+        cleanup(container);
+        resolve(false);
+        return;
+      }
+
+      const range = document.createRange();
+      try {
+        range.selectNode(wrapper.firstChild);
+      } catch (error) {
+        console.error("Legacy range selection failed:", error);
+        cleanup(container);
+        resolve(false);
+        return;
+      }
+
+      selection.removeAllRanges();
+      selection.addRange(range);
+
+      let succeeded = false;
+      try {
+        succeeded = document.execCommand("copy");
+      } catch (error) {
+        console.error("Legacy execCommand copy failed:", error);
+        succeeded = false;
+      }
+
+      cleanup(container);
+      resolve(succeeded);
+    };
+
+    img.onerror = () => resolve(false);
+  });
+}
+
+async function copyImageToClipboard(blob, dataUrl) {
+  if (await attemptModernClipboardCopy(blob, dataUrl)) return true;
+  const legacyResult = await legacyCopyImageFromDataUrl(dataUrl);
+  return legacyResult;
+}
+
 // --- Copy card to clipboard ---
 async function copyCardToClipboard() {
   const summon = document.querySelector(".copy-summon");
@@ -250,47 +383,26 @@ async function copyCardToClipboard() {
   if (copyFeedback) copyFeedback.style.opacity = "0";
 
   let copySucceeded = false;
-  let imageDataUrl = null;
-  let imageBlob = null;
+  let renderResult;
   let cleanup;
 
   try {
-    const renderResult = await renderCardImage();
+    renderResult = await renderCardImage();
     cleanup = renderResult.cleanup;
-    imageDataUrl = renderResult.dataUrl;
-    imageBlob = renderResult.blob;
-
-    if (imageBlob && navigator.clipboard && window.ClipboardItem) {
-      await navigator.clipboard.write([new ClipboardItem({ [imageBlob.type || "image/png"]: imageBlob })]);
-      copySucceeded = true;
-    } else if (imageDataUrl && navigator.clipboard && window.ClipboardItem) {
-      const response = await fetch(imageDataUrl);
-      const blob = await response.blob();
-      await navigator.clipboard.write([new ClipboardItem({ "image/png": blob })]);
-      copySucceeded = true;
-    }
+    copySucceeded = await copyImageToClipboard(renderResult.blob, renderResult.dataUrl);
   } catch (error) {
     console.error("Failed to render ritual card image:", error);
   } finally {
     if (cleanup) cleanup();
   }
 
-  if (!copySucceeded && imageDataUrl) {
-    const popup = window.open(imageDataUrl, "_blank", "noopener,noreferrer");
-    if (!popup) {
-      const downloadLink = document.createElement("a");
-      downloadLink.href = imageDataUrl;
-      downloadLink.download = "ritual-card.png";
-      downloadLink.click();
-    }
-  }
-
-  if (!copySucceeded && !imageDataUrl) {
+  if (!copySucceeded) {
     if (copyHint) {
       copyHint.textContent = "copy failed";
       copyHint.style.color = "#F87171";
       copyHint.style.opacity = "1";
     }
+    if (copyFeedback) copyFeedback.style.opacity = "0";
     return;
   }
 
@@ -304,13 +416,8 @@ async function copyCardToClipboard() {
     cardElement.classList.add("copied");
 
     if (copyHint) {
-      if (copySucceeded) {
-        copyHint.textContent = "copied";
-        copyHint.style.color = "#8AF2B8";
-      } else {
-        copyHint.textContent = "image ready";
-        copyHint.style.color = "#FBBF24";
-      }
+      copyHint.textContent = "copied";
+      copyHint.style.color = "#8AF2B8";
       copyHint.style.opacity = "1";
     }
 
