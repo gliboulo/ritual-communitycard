@@ -62,6 +62,20 @@ body::after {
   width: 100%;
 }
 
+.export-root .card-inner {
+  gap: 2.5rem;
+}
+
+.export-root .rarity-pill {
+  top: 2rem;
+  right: 2rem;
+}
+
+.export-root .brand-mark {
+  top: -3.25rem;
+  width: 5.5rem;
+}
+
 .glass-panel {
   border-radius: 1.25rem;
   background: rgba(255, 255, 255, 0.04);
