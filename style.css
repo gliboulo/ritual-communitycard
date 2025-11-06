@@ -156,9 +156,36 @@ body::after {
     margin-inline: auto;
   }
 
+  #cardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding-bottom: 4.5rem;
+  }
+
+  #cardContent .card-inner {
+    order: 1;
+  }
+
+  #rarityPill {
+    position: static;
+    order: 0;
+    align-self: center;
+    max-width: 80%;
+    padding-inline: 1.75rem;
+    text-align: center;
+  }
+
+  .copy-summon {
+    right: 1rem;
+    bottom: 3.25rem;
+    font-size: 0.7rem;
+  }
+
   .copy-hint,
   .copy-feedback {
-    right: 1.5rem;
-    bottom: 1.5rem;
+    right: 1rem;
+    bottom: 1rem;
+    font-size: 0.65rem;
   }
 }
