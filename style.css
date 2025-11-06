@@ -48,6 +48,20 @@ body::after {
   opacity: 0.55;
 }
 
+.export-root {
+  position: fixed;
+  top: -200vh;
+  left: -200vw;
+  width: 576px;
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.export-root .card {
+  width: 100%;
+}
+
 .glass-panel {
   border-radius: 1.25rem;
   background: rgba(255, 255, 255, 0.04);
@@ -133,43 +147,6 @@ body::after {
 .pledge-counter {
   text-shadow: 0 0 6px rgba(140, 255, 200, 0.35);
   transition: opacity 0.35s ease, text-shadow 0.35s ease;
-}
-
-.card.export-mode {
-  width: 576px;
-  max-width: 576px;
-  min-width: 576px;
-  margin: 0;
-}
-
-.card.export-mode #cardContent {
-  padding: 2rem;
-}
-
-.card.export-mode .card-inner {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 2rem;
-}
-
-.card.export-mode .avatar-column {
-  margin: 0;
-  max-width: 260px;
-}
-
-.card.export-mode .info {
-  text-align: left;
-  align-items: flex-start;
-}
-
-.card.export-mode #rarityPill {
-  position: absolute;
-  right: 1.5rem;
-  top: 1.5rem;
-  align-self: auto;
-  max-width: none;
-  padding-inline: 1rem;
 }
 
 @media (max-width: 1024px) {

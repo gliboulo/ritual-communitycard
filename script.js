@@ -10,6 +10,14 @@ const avatarPreview = document.getElementById("avatarPreview");
 const avatarInner   = document.querySelector(".avatar-inner");
 const rarityPill    = document.getElementById("rarityPill");
 const cardElement   = document.getElementById("card");
+const exportRoot    = document.getElementById("exportCardRoot");
+const exportCardTemplate = exportRoot ? exportRoot.querySelector(".card") : null;
+const exportPseudo  = document.getElementById("exportPseudo");
+const exportRole    = document.getElementById("exportRole");
+const exportDesc    = document.getElementById("exportDesc");
+const exportAvatar  = document.getElementById("exportAvatar");
+const exportRarityPill = document.getElementById("exportRarityPill");
+const exportAvatarInner = exportCardTemplate ? exportCardTemplate.querySelector(".avatar-inner") : null;
 const copyCardBtn   = document.getElementById("copyCardBtn");
 const copyHint      = document.querySelector(".copy-hint");
 const copyFeedback  = document.querySelector(".copy-feedback");
@@ -35,6 +43,17 @@ if (avatarPreview) {
     avatarInner.style.backgroundSize = "cover";
     avatarInner.style.backgroundRepeat = "no-repeat";
   }
+  if (exportAvatarInner) {
+    exportAvatarInner.style.backgroundImage = `url("${initialSrc}")`;
+    exportAvatarInner.style.backgroundPosition = "center";
+    exportAvatarInner.style.backgroundSize = "cover";
+    exportAvatarInner.style.backgroundRepeat = "no-repeat";
+  }
+}
+if (exportAvatar) {
+  const exportInitialSrc = avatarPreview?.dataset.exportSrc || exportAvatar.src || defaultAvatarSrc || "pepefront.png";
+  exportAvatar.dataset.exportSrc = exportInitialSrc;
+  exportAvatar.src = exportInitialSrc;
 }
 
 function setAvatarPreviewSource(src, uploaded) {
@@ -44,9 +63,16 @@ function setAvatarPreviewSource(src, uploaded) {
   if (avatarInner) {
     avatarInner.style.backgroundImage = `url("${src}")`;
   }
+  if (exportAvatarInner) {
+    exportAvatarInner.style.backgroundImage = `url("${src}")`;
+  }
   const preloader = new Image();
   preloader.src = src;
   avatarPreloads.push(preloader);
+  if (exportAvatar) {
+    exportAvatar.src = src;
+    exportAvatar.dataset.exportSrc = src;
+  }
 
   if (uploaded) {
     avatarPreview.setAttribute("data-uploaded-src", "true");
@@ -70,6 +96,7 @@ const descs = [
 ];
 
 descDisplay.textContent = descs[Math.floor(Math.random() * descs.length)];
+if (exportDesc) exportDesc.textContent = descDisplay.textContent;
 
 // --- Role to Rarity ---
 function getGrade(role) {
@@ -85,15 +112,20 @@ function update() {
   const pseudo = pseudoInput.value.trim() || "Unnamed Ritualist";
   const role = roleSelect.value || "Initiate";
   const grade = getGrade(role);
-
-  pseudoDisplay.textContent = pseudo;
-  roleDisplay.innerHTML = `
+  const roleMarkup = `
     <span class="font-semibold text-primary">${role}</span>
     <span class="mx-1 text-foam/40">&bull;</span>
     <span class="text-primary">${grade}</span>
   `;
 
+  pseudoDisplay.textContent = pseudo;
+  roleDisplay.innerHTML = roleMarkup;
+
   rarityPill.textContent = grade;
+  if (exportPseudo) exportPseudo.textContent = pseudo;
+  if (exportRole) exportRole.innerHTML = roleMarkup;
+  if (exportRarityPill) exportRarityPill.textContent = grade;
+  if (exportDesc) exportDesc.textContent = descDisplay.textContent;
 }
 
 pseudoInput.addEventListener("input", update);
@@ -165,6 +197,13 @@ async function ensureCardImagesReady() {
   await Promise.all(loadPromises);
 }
 
+async function ensureExportCardReady() {
+  if (!exportCardTemplate) return;
+  const images = exportCardTemplate.querySelectorAll("img");
+  const loadPromises = Array.from(images).map(waitForImageLoad);
+  await Promise.all(loadPromises);
+}
+
 async function waitForExportNodeReady(node) {
   if (!node) return;
 
@@ -180,63 +219,32 @@ async function waitForExportNodeReady(node) {
 }
 
 function buildExportCard() {
-  const clone = cardElement.cloneNode(true);
+  const sourceCard = exportCardTemplate || cardElement;
+  const clone = sourceCard.cloneNode(true);
   clone.removeAttribute("id");
   clone.style.transform = "none";
   clone.style.transition = "none";
   clone.style.cursor = "default";
-  clone.classList.add("export-mode");
   const exportWidth = 576;
   clone.style.width = `${exportWidth}px`;
   clone.style.maxWidth = `${exportWidth}px`;
   clone.style.minWidth = `${exportWidth}px`;
   clone.style.height = "auto";
   clone.classList.remove("group");
-
-  clone.querySelectorAll(".copy-hint, .copy-feedback, .copy-summon").forEach(el => el.remove());
-
-  const originalAvatar = document.getElementById("avatarPreview");
-  const cloneAvatar = clone.querySelector("#avatarPreview");
-  const originalAvatarInner = document.querySelector(".avatar-inner");
-  const cloneAvatarInner = clone.querySelector(".avatar-inner");
-
-  if (originalAvatarInner && cloneAvatarInner) {
-    const innerStyles = window.getComputedStyle(originalAvatarInner);
-    cloneAvatarInner.style.backgroundImage = innerStyles.backgroundImage;
-    cloneAvatarInner.style.backgroundPosition = innerStyles.backgroundPosition;
-    cloneAvatarInner.style.backgroundSize = innerStyles.backgroundSize;
-    cloneAvatarInner.style.backgroundRepeat = innerStyles.backgroundRepeat;
-    cloneAvatarInner.style.backgroundColor = innerStyles.backgroundColor;
-  }
-
-  if (originalAvatar && cloneAvatar) {
-    const avatarSrc = originalAvatar.dataset.exportSrc || originalAvatar.currentSrc || originalAvatar.src;
-    if (avatarSrc) {
-      cloneAvatar.src = avatarSrc;
-      cloneAvatar.setAttribute("loading", "eager");
-    }
-    cloneAvatar.removeAttribute("srcset");
-    const originalStyles = window.getComputedStyle(originalAvatar);
-    cloneAvatar.style.objectFit = originalStyles.objectFit || "cover";
-    cloneAvatar.style.objectPosition = originalStyles.objectPosition || "center";
-  }
-
+  clone.querySelectorAll("[id]").forEach(el => el.removeAttribute("id"));
   return clone;
 }
 
 async function renderCardImage() {
   await ensureCardImagesReady();
-
-  const hasInlineImages = Array.from(cardElement.querySelectorAll("img")).some(img => {
-    const src = img.currentSrc || img.src || "";
-    return src.startsWith("data:") || src.startsWith("blob:");
-  });
+  await ensureExportCardReady();
 
   const exportNode = buildExportCard();
   const container = document.createElement("div");
   container.style.position = "fixed";
   container.style.pointerEvents = "none";
   container.style.left = "-9999px";
+  container.style.top = "-9999px";
   container.appendChild(exportNode);
   document.body.appendChild(container);
 
@@ -247,7 +255,7 @@ async function renderCardImage() {
     backgroundColor: "#0d1512",
     cacheBust: true,
     quality: 1,
-    useCORS: !hasInlineImages
+    useCORS: false
   };
 
   const cleanup = () => {

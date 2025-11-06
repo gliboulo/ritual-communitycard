@@ -137,6 +137,31 @@
       </section>
     </main>
 
+    <div id="exportCardRoot" aria-hidden="true" class="export-root">
+      <div class="card export-card relative w-full rounded-[28px] border border-white/10 bg-card/95 p-1 shadow-card-base">
+        <div class="relative overflow-visible rounded-[24px] border border-white/5 bg-card/90 p-8">
+          <div class="card-inner flex flex-row items-center gap-8">
+            <div class="avatar-column flex w-full max-w-[260px] flex-col items-center">
+              <div class="avatar-wrapper relative flex aspect-square w-full items-center justify-center overflow-visible">
+                <div class="avatar-inner flex h-full w-full items-center justify-center overflow-hidden rounded-[26px] border border-white/10 bg-black/20 shadow-inner">
+                  <img id="exportAvatar" src="pepefront.png" alt="ritual avatar export" class="avatar h-full w-full object-cover" />
+                </div>
+                <img src="Translucent.svg" alt="ritual brand mark" class="brand-mark pointer-events-none absolute left-1/2 -top-12 w-24 -translate-x-1/2 opacity-80 drop-shadow-[0_0_18px_rgba(12,166,120,0.35)]" />
+              </div>
+            </div>
+
+            <div class="info flex flex-1 flex-col justify-center gap-4 text-left text-foam">
+              <p id="exportPseudo" class="pseudo text-3xl font-semibold tracking-tight"></p>
+              <p id="exportRole" class="role-line text-base font-medium text-foam/70"></p>
+              <p id="exportDesc" class="desc text-base italic leading-relaxed text-foam/60"></p>
+            </div>
+          </div>
+
+          <div id="exportRarityPill" class="rarity-pill absolute right-8 top-8 rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-[11px] font-semibold uppercase tracking-[0.35em] text-primary shadow-card-glow"></div>
+        </div>
+      </div>
+    </div>
+
     <footer class="footer pointer-events-none fixed inset-x-0 bottom-6 z-40 px-6">
       <div class="mx-auto flex w-full max-w-6xl flex-col gap-3 text-sm text-foam/70 sm:flex-row sm:items-center sm:justify-between">
         <a href="https://x.com/pince_croco" target="_blank" class="pointer-events-auto text-foam/70 transition hover:text-primary">built by pince croco</a>
