@@ -237,6 +237,17 @@ function dataUrlToBlob(dataUrl) {
   return fetch(dataUrl).then(response => response.blob());
 }
 
+function isIOSDevice() {
+  if (typeof navigator === "undefined") return false;
+  const ua = navigator.userAgent || "";
+  const platform = navigator.platform || "";
+  const maxTouchPoints = navigator.maxTouchPoints || 0;
+
+  const iOSMatch = /iPad|iPhone|iPod/.test(ua);
+  const iPadOS13Up = platform === "MacIntel" && maxTouchPoints > 1;
+  return iOSMatch || iPadOS13Up;
+}
+
 function isModernImageClipboardAvailable() {
   return typeof navigator !== "undefined" &&
     !!navigator.clipboard &&
@@ -255,12 +266,23 @@ async function ensureClipboardWriteAllowed() {
   }
 }
 
-async function writeBlobToClipboard(blob) {
+async function writeBlobToClipboard(blob, dataUrl) {
   if (!blob) return false;
 
-  const pngBlob = blob.type === "image/png" ? blob : new Blob([blob], { type: "image/png" });
+  let pngBlob = blob;
+  if (blob.type !== "image/png") {
+    const arrayBuffer = blob.arrayBuffer ? await blob.arrayBuffer() : await new Response(blob).arrayBuffer();
+    pngBlob = new Blob([arrayBuffer], { type: "image/png" });
+  }
+
+  const clipboardPayload = { "image/png": pngBlob };
+  if (dataUrl) {
+    clipboardPayload["text/html"] = `<img src="${dataUrl}" alt="ritual card" />`;
+    clipboardPayload["text/plain"] = dataUrl;
+  }
+
   try {
-    const clipboardItem = new ClipboardItem({ "image/png": pngBlob });
+    const clipboardItem = new ClipboardItem(clipboardPayload);
     await navigator.clipboard.write([clipboardItem]);
     return true;
   } catch (error) {
@@ -275,14 +297,14 @@ async function attemptModernClipboardCopy(blob, dataUrl) {
   if (!permissionOk) return false;
 
   if (blob) {
-    const blobCopy = await writeBlobToClipboard(blob);
+    const blobCopy = await writeBlobToClipboard(blob, dataUrl);
     if (blobCopy) return true;
   }
 
   if (dataUrl) {
     try {
       const dataBlob = await dataUrlToBlob(dataUrl);
-      const blobCopy = await writeBlobToClipboard(dataBlob);
+      const blobCopy = await writeBlobToClipboard(dataBlob, dataUrl);
       if (blobCopy) return true;
     } catch (error) {
       console.error("Clipboard write from data URL failed:", error);
@@ -321,12 +343,12 @@ function legacyCopyImageFromDataUrl(dataUrl) {
       wrapper.appendChild(img);
       container.appendChild(wrapper);
       container.setAttribute("tabindex", "-1");
+      document.body.appendChild(container);
       try {
         container.focus({ preventScroll: true });
       } catch (error) {
         console.debug("Legacy container focus failed:", error);
       }
-      document.body.appendChild(container);
 
       const selection = window.getSelection();
       if (!selection) {
@@ -398,8 +420,9 @@ async function copyCardToClipboard() {
 
   if (!copySucceeded) {
     if (copyHint) {
-      copyHint.textContent = "copy failed";
-      copyHint.style.color = "#F87171";
+      const ios = isIOSDevice();
+      copyHint.textContent = ios ? "tap & hold card to copy" : "copy failed";
+      copyHint.style.color = ios ? "#FBBF24" : "#F87171";
       copyHint.style.opacity = "1";
     }
     if (copyFeedback) copyFeedback.style.opacity = "0";
