@@ -191,12 +191,6 @@ function waitForImageLoad(img) {
   });
 }
 
-async function ensureCardImagesReady() {
-  const images = cardElement.querySelectorAll("img");
-  const loadPromises = Array.from(images).map(waitForImageLoad);
-  await Promise.all(loadPromises);
-}
-
 async function ensureExportCardReady() {
   if (!exportCardTemplate) return;
   const images = exportCardTemplate.querySelectorAll("img");
@@ -204,101 +198,41 @@ async function ensureExportCardReady() {
   await Promise.all(loadPromises);
 }
 
-async function waitForExportNodeReady(node) {
-  if (!node) return;
-
-  const images = node.querySelectorAll("img");
-  const loadPromises = Array.from(images).map(img => {
-    if (img.src?.startsWith("data:")) return waitForImageLoad(img);
-    return waitForImageLoad(img);
-  });
-  await Promise.all(loadPromises);
-
-  await new Promise(requestAnimationFrame);
-  await new Promise(requestAnimationFrame);
-}
-
-function buildExportCard() {
-  const sourceCard = exportCardTemplate || cardElement;
-  const clone = sourceCard.cloneNode(true);
-  clone.removeAttribute("id");
-  clone.style.transform = "none";
-  clone.style.transition = "none";
-  clone.style.cursor = "default";
-  const exportWidth = 576;
-  clone.style.width = `${exportWidth}px`;
-  clone.style.maxWidth = `${exportWidth}px`;
-  clone.style.minWidth = `${exportWidth}px`;
-  clone.style.height = "auto";
-  clone.classList.remove("group");
-  clone.querySelectorAll("[id]").forEach(el => el.removeAttribute("id"));
-  return clone;
-}
-
 async function renderCardImage() {
-  await ensureCardImagesReady();
+  if (!exportCardTemplate) throw new Error("Missing export card template");
   await ensureExportCardReady();
 
-  const exportNode = buildExportCard();
-  const container = document.createElement("div");
-  container.style.position = "fixed";
-  container.style.pointerEvents = "none";
-  container.style.left = "-9999px";
-  container.style.top = "-9999px";
-  container.appendChild(exportNode);
-  document.body.appendChild(container);
-
-  await waitForExportNodeReady(exportNode);
-
-  const options = {
-    pixelRatio: 2,
-    backgroundColor: "#0d1512",
-    cacheBust: true,
-    quality: 1,
-    useCORS: false
-  };
-
-  const cleanup = () => {
-    if (container.parentNode) container.parentNode.removeChild(container);
-  };
+  const previousTransform = exportRoot.style.transform;
+  const previousOpacity = exportRoot.style.opacity;
+  exportRoot.style.opacity = "1";
+  exportRoot.style.transform = "translate(-9999px, -9999px)";
 
   try {
-    const blob = await htmlToImage.toBlob(exportNode, options);
-    if (blob) {
-      const dataUrl = await blobToDataUrl(blob);
-      return { blob, dataUrl, cleanup };
-    }
-  } catch (err) {
-    console.error("toBlob failed", err);
-  }
+    const canvas = await html2canvas(exportCardTemplate, {
+      backgroundColor: "#0d1512",
+      scale: Math.max(2, window.devicePixelRatio || 2),
+      useCORS: true,
+      allowTaint: true,
+      logging: false
+    });
 
-  try {
-    const dataUrl = await htmlToImage.toPng(exportNode, options);
-    return { blob: null, dataUrl, cleanup };
-  } catch (err) {
-    console.error("toPng failed", err);
-  }
-
-  try {
-    const canvas = await htmlToImage.toCanvas(exportNode, options);
     const dataUrl = canvas.toDataURL("image/png");
     let blob = await new Promise(resolve => canvas.toBlob(resolve, "image/png"));
     if (!blob) blob = await dataUrlToBlob(dataUrl);
-    return { blob, dataUrl, cleanup };
-  } catch (err) {
-    console.error("toCanvas failed", err);
-  }
 
-  try {
-    const svgUrl = await htmlToImage.toSvg(exportNode, options);
-    const blob = await dataUrlToBlob(svgUrl);
-    return { blob, dataUrl: svgUrl, cleanup };
-  } catch (err) {
-    console.error("toSvg failed", err);
+    return {
+      blob,
+      dataUrl,
+      cleanup: () => {
+        exportRoot.style.opacity = previousOpacity;
+        exportRoot.style.transform = previousTransform;
+      }
+    };
+  } catch (error) {
+    exportRoot.style.opacity = previousOpacity;
+    exportRoot.style.transform = previousTransform;
+    throw error;
   }
-
-  cleanup();
-  throw new Error("Unable to render ritual card image");
 }
 
 function blobToDataUrl(blob) {
