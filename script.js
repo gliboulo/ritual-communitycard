@@ -173,9 +173,9 @@ function syncExportLayout() {
   if (!exportCardTemplate) return;
 
   if (exportBrandMark) {
-    exportBrandMark.style.top = "-3.5rem";
-    exportBrandMark.style.left = "50%";
-    exportBrandMark.style.transform = "translateX(-50%)";
+    exportBrandMark.style.top = "-3.4rem";
+    exportBrandMark.style.left = "calc(50% - 2.75rem)";
+    exportBrandMark.style.transform = "none";
     exportBrandMark.style.width = "5.5rem";
     exportBrandMark.style.height = "auto";
   }
@@ -185,11 +185,12 @@ function syncExportLayout() {
     exportRarityPill.style.right = "2rem";
     exportRarityPill.style.left = "auto";
     exportRarityPill.style.transform = "none";
-    exportRarityPill.style.padding = "0.75rem 1.5rem";
+    exportRarityPill.style.padding = "0.65rem 1.5rem";
     exportRarityPill.style.display = "inline-flex";
     exportRarityPill.style.alignItems = "center";
     exportRarityPill.style.justifyContent = "center";
-    exportRarityPill.style.height = "2.5rem";
+    exportRarityPill.style.height = "2.35rem";
+    exportRarityPill.style.lineHeight = "1";
   }
 }
 
