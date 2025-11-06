@@ -9,11 +9,20 @@ const descDisplay   = document.getElementById("descDisplay");
 const avatarPreview = document.getElementById("avatarPreview");
 const rarityPill    = document.getElementById("rarityPill");
 const cardElement   = document.getElementById("card");
+const copyCardBtn   = document.getElementById("copyCardBtn");
 const copyHint      = document.querySelector(".copy-hint");
 const copyFeedback  = document.querySelector(".copy-feedback");
-const copyHintDefaultText = copyHint ? copyHint.textContent : "click to copy";
-const copyHintDefaultColor = copyHint ? getComputedStyle(copyHint).color : "";
+let copyHintDefaultText = copyHint ? copyHint.textContent : "click to copy";
+let copyHintDefaultColor = copyHint ? getComputedStyle(copyHint).color : "";
 const defaultAvatarSrc = avatarPreview ? avatarPreview.getAttribute("src") : "";
+const iosDevice = isIOSDevice();
+
+if (iosDevice && copyHint) {
+  copyHintDefaultText = "tap the copy button";
+  copyHint.textContent = copyHintDefaultText;
+  copyHintDefaultColor = getComputedStyle(copyHint).color;
+  copyHint.style.opacity = "1";
+}
 
 cardElement.setAttribute("role", "button");
 cardElement.setAttribute("tabindex", "0");
@@ -254,63 +263,72 @@ function isModernImageClipboardAvailable() {
     typeof window.ClipboardItem !== "undefined";
 }
 
-async function ensureClipboardWriteAllowed() {
-  if (!navigator.permissions || !navigator.permissions.query) return true;
+async function toPngBlob(blob) {
+  if (!blob) return null;
+  if (blob.type === "image/png") return blob;
 
   try {
-    const result = await navigator.permissions.query({ name: "clipboard-write" });
-    return result.state === "granted" || result.state === "prompt";
-  } catch (error) {
-    console.debug("clipboard-write permission check unavailable:", error);
-    return true;
-  }
-}
-
-async function writeBlobToClipboard(blob, dataUrl) {
-  if (!blob) return false;
-
-  let pngBlob = blob;
-  if (blob.type !== "image/png") {
     const arrayBuffer = blob.arrayBuffer ? await blob.arrayBuffer() : await new Response(blob).arrayBuffer();
-    pngBlob = new Blob([arrayBuffer], { type: "image/png" });
-  }
-
-  const clipboardPayload = { "image/png": pngBlob };
-  if (dataUrl) {
-    clipboardPayload["text/html"] = `<img src="${dataUrl}" alt="ritual card" />`;
-    clipboardPayload["text/plain"] = dataUrl;
-  }
-
-  try {
-    const clipboardItem = new ClipboardItem(clipboardPayload);
-    await navigator.clipboard.write([clipboardItem]);
-    return true;
+    return new Blob([arrayBuffer], { type: "image/png" });
   } catch (error) {
-    console.error("Modern clipboard write failed:", error);
-    return false;
+    console.error("Failed to convert blob to PNG:", error);
+    return null;
   }
 }
 
 async function attemptModernClipboardCopy(blob, dataUrl) {
   if (!isModernImageClipboardAvailable()) return false;
-  const permissionOk = await ensureClipboardWriteAllowed();
-  if (!permissionOk) return false;
 
+  const candidateBlobs = [];
   if (blob) {
-    const blobCopy = await writeBlobToClipboard(blob, dataUrl);
-    if (blobCopy) return true;
+    const pngBlob = await toPngBlob(blob);
+    if (pngBlob) candidateBlobs.push(pngBlob);
   }
-
   if (dataUrl) {
     try {
       const dataBlob = await dataUrlToBlob(dataUrl);
-      const blobCopy = await writeBlobToClipboard(dataBlob, dataUrl);
-      if (blobCopy) return true;
+      const pngBlob = await toPngBlob(dataBlob);
+      if (pngBlob) candidateBlobs.push(pngBlob);
     } catch (error) {
       console.error("Clipboard write from data URL failed:", error);
     }
   }
 
+  if (!candidateBlobs.length) return false;
+
+  const payloadVariants = [];
+  for (const candidate of candidateBlobs) {
+    payloadVariants.push({ "image/png": candidate });
+    payloadVariants.push({ "image/png": Promise.resolve(candidate) });
+    if (dataUrl) {
+      const html = `<img src="${dataUrl}" alt="ritual card" />`;
+      payloadVariants.push({
+        "image/png": candidate,
+        "text/html": html,
+        "text/plain": dataUrl
+      });
+      payloadVariants.push({
+        "image/png": Promise.resolve(candidate),
+        "text/html": html,
+        "text/plain": dataUrl
+      });
+    }
+  }
+
+  let lastError = null;
+  for (const payload of payloadVariants) {
+    try {
+      const item = new ClipboardItem(payload);
+      await navigator.clipboard.write([item]);
+      return true;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+
+  if (lastError) {
+    console.error("Modern clipboard write failed:", lastError);
+  }
   return false;
 }
 
@@ -420,9 +438,8 @@ async function copyCardToClipboard() {
 
   if (!copySucceeded) {
     if (copyHint) {
-      const ios = isIOSDevice();
-      copyHint.textContent = ios ? "tap & hold card to copy" : "copy failed";
-      copyHint.style.color = ios ? "#FBBF24" : "#F87171";
+      copyHint.textContent = "copy failed";
+      copyHint.style.color = "#F87171";
       copyHint.style.opacity = "1";
     }
     if (copyFeedback) copyFeedback.style.opacity = "0";
@@ -456,13 +473,27 @@ async function copyCardToClipboard() {
   }, 2000);
 }
 
-cardElement.addEventListener("click", copyCardToClipboard);
-cardElement.addEventListener("keydown", event => {
-  if (event.key === "Enter" || event.key === " ") {
+if (cardElement) {
+  cardElement.addEventListener("click", copyCardToClipboard);
+  cardElement.addEventListener("keydown", event => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      copyCardToClipboard();
+    }
+  });
+}
+
+if (copyCardBtn) {
+  if (iosDevice) {
+    copyCardBtn.classList.remove("hidden");
+    copyCardBtn.classList.add("inline-flex");
+  }
+
+  copyCardBtn.addEventListener("click", event => {
     event.preventDefault();
     copyCardToClipboard();
-  }
-});
+  });
+}
 
 // --- Tweet button ---
 document.getElementById("pledgeBtn").addEventListener("click", () => {
