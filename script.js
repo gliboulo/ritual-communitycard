@@ -142,7 +142,11 @@ async function waitForExportNodeReady(node) {
   if (!node) return;
 
   const images = node.querySelectorAll("img");
-  await Promise.all(Array.from(images).map(waitForImageLoad));
+  const loadPromises = Array.from(images).map(img => {
+    if (img.src?.startsWith("data:")) return waitForImageLoad(img);
+    return waitForImageLoad(img);
+  });
+  await Promise.all(loadPromises);
 
   await new Promise(requestAnimationFrame);
   await new Promise(requestAnimationFrame);
@@ -155,11 +159,71 @@ function buildExportCard() {
   clone.style.transition = "none";
   clone.style.boxShadow = "none";
   clone.style.cursor = "default";
-  clone.style.width = `${cardElement.offsetWidth}px`;
-  clone.style.height = `${cardElement.offsetHeight}px`;
+  const cardRect = cardElement.getBoundingClientRect();
+  const exportWidth = Math.max(576, Math.round(cardRect.width));
+  clone.style.width = `${exportWidth}px`;
+  clone.style.maxWidth = `${exportWidth}px`;
+  clone.style.minWidth = `${exportWidth}px`;
+  clone.style.height = "auto";
   clone.classList.remove("group");
 
   clone.querySelectorAll(".copy-hint, .copy-feedback, .copy-summon").forEach(el => el.remove());
+
+  const originalAvatar = document.getElementById("avatarPreview");
+  const cloneAvatar = clone.querySelector("#avatarPreview");
+  if (originalAvatar && cloneAvatar) {
+    const avatarSrc = originalAvatar.currentSrc || originalAvatar.src;
+    if (avatarSrc) {
+      cloneAvatar.crossOrigin = "anonymous";
+      cloneAvatar.src = avatarSrc;
+      cloneAvatar.setAttribute("data-export-src", avatarSrc);
+    }
+    cloneAvatar.removeAttribute("srcset");
+  }
+
+  if (typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches) {
+    const content = clone.querySelector("#cardContent");
+    if (content) {
+      content.style.display = "block";
+      content.style.flexDirection = "";
+      content.style.gap = "";
+      content.style.padding = "2rem";
+      content.style.paddingBottom = "2rem";
+    }
+
+    const cardInner = clone.querySelector(".card-inner");
+    if (cardInner) {
+      cardInner.style.display = "flex";
+      cardInner.style.flexDirection = "row";
+      cardInner.style.alignItems = "center";
+      cardInner.style.justifyContent = "flex-start";
+      cardInner.style.gap = "2rem";
+      cardInner.style.order = "0";
+    }
+
+    const avatarColumn = clone.querySelector(".avatar-column");
+    if (avatarColumn) {
+      avatarColumn.style.margin = "0";
+      avatarColumn.style.maxWidth = "260px";
+    }
+
+    const infoColumn = clone.querySelector(".info");
+    if (infoColumn) {
+      infoColumn.style.textAlign = "left";
+      infoColumn.style.alignItems = "flex-start";
+    }
+
+    const rarityPill = clone.querySelector("#rarityPill");
+    if (rarityPill) {
+      rarityPill.style.position = "absolute";
+      rarityPill.style.right = "1.5rem";
+      rarityPill.style.top = "1.5rem";
+      rarityPill.style.alignSelf = "auto";
+      rarityPill.style.maxWidth = "none";
+      rarityPill.style.paddingInline = "1rem";
+      rarityPill.style.textAlign = "center";
+    }
+  }
 
   return clone;
 }
@@ -410,6 +474,35 @@ async function copyImageToClipboard(blob, dataUrl) {
   return legacyResult;
 }
 
+async function renderResultToClipboardBlob(renderResult) {
+  if (!renderResult) throw new Error("Missing render result");
+
+  if (renderResult.blob) {
+    const png = await toPngBlob(renderResult.blob);
+    if (png) return png;
+  }
+
+  if (renderResult.dataUrl) {
+    const dataBlob = await dataUrlToBlob(renderResult.dataUrl);
+    const png = await toPngBlob(dataBlob);
+    if (png) return png;
+  }
+
+  throw new Error("Unable to create clipboard blob");
+}
+
+async function generateClipboardAsset() {
+  const renderResult = await renderCardImage();
+  const pngBlob = await renderResultToClipboardBlob(renderResult);
+  const dataUrl = renderResult.dataUrl || await blobToDataUrl(pngBlob);
+
+  return {
+    renderResult,
+    pngBlob,
+    dataUrl
+  };
+}
+
 // --- Copy card to clipboard ---
 async function copyCardToClipboard() {
   const summon = document.querySelector(".copy-summon");
@@ -423,22 +516,81 @@ async function copyCardToClipboard() {
   if (copyFeedback) copyFeedback.style.opacity = "0";
 
   let copySucceeded = false;
-  let renderResult;
   let cleanup;
+  let asset = null;
+  let assetError = null;
+
+  const assetPromise = (async () => {
+    const prepared = await generateClipboardAsset();
+    return prepared;
+  })();
+
+  if (isModernImageClipboardAvailable()) {
+    try {
+      const clipboardItem = new ClipboardItem({
+        "image/png": assetPromise.then(prepared => prepared.pngBlob),
+        "text/plain": assetPromise.then(prepared => prepared.dataUrl),
+        "text/html": assetPromise.then(prepared => `<img src="${prepared.dataUrl}" alt="ritual card" />`)
+      });
+      await navigator.clipboard.write([clipboardItem]);
+      copySucceeded = true;
+    } catch (error) {
+      console.error("Immediate clipboard write failed:", error);
+    }
+  }
 
   try {
-    renderResult = await renderCardImage();
-    cleanup = renderResult.cleanup;
-    copySucceeded = await copyImageToClipboard(renderResult.blob, renderResult.dataUrl);
+    asset = await assetPromise;
+    cleanup = asset.renderResult.cleanup;
   } catch (error) {
-    console.error("Failed to render ritual card image:", error);
-  } finally {
-    if (cleanup) cleanup();
+    assetError = error;
+    console.error("Failed generating clipboard asset:", error);
   }
+
+  if (!copySucceeded && asset) {
+    try {
+      copySucceeded = await copyImageToClipboard(asset.pngBlob, asset.dataUrl);
+    } catch (error) {
+      console.error("Clipboard fallback copy failed:", error);
+    }
+  }
+
+  const shareSupported = typeof navigator !== "undefined" &&
+    typeof navigator.share === "function" &&
+    typeof navigator.canShare === "function" &&
+    typeof File === "function";
+
+  if (!copySucceeded && iosDevice && asset && shareSupported) {
+    try {
+      const shareFile = new File([asset.pngBlob], "ritual-card.png", { type: "image/png" });
+      let canShareFile = false;
+      try {
+        canShareFile = navigator.canShare({ files: [shareFile] });
+      } catch (error) {
+        console.error("Share capability check failed:", error);
+      }
+
+      if (canShareFile) {
+        await navigator.share({
+          files: [shareFile],
+          title: "Ritual Card",
+          text: "Your ritual card is ready."
+        });
+        copySucceeded = true;
+      }
+    } catch (error) {
+      if (error?.name !== "AbortError") {
+        console.error("Share fallback failed:", error);
+      }
+    }
+  }
+
+  if (cleanup) cleanup();
 
   if (!copySucceeded) {
     if (copyHint) {
-      copyHint.textContent = "copy failed";
+      const message = assetError ? "render failed" : "copy failed";
+      copyHint.textContent = message;
       copyHint.style.color = "#F87171";
       copyHint.style.opacity = "1";
     }
