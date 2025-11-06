@@ -69,10 +69,17 @@ body::after {
 .export-root .rarity-pill {
   top: 2rem;
   right: 2rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding-inline: 1.5rem;
+  height: 2.5rem;
 }
 
 .export-root .brand-mark {
   top: -3.25rem;
+  left: 50%;
+  transform: translateX(-50%);
   width: 5.5rem;
 }
 

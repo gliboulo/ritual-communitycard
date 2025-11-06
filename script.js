@@ -18,6 +18,8 @@ const exportDesc    = document.getElementById("exportDesc");
 const exportAvatar  = document.getElementById("exportAvatar");
 const exportRarityPill = document.getElementById("exportRarityPill");
 const exportAvatarInner = exportCardTemplate ? exportCardTemplate.querySelector(".avatar-inner") : null;
+const brandMark = cardElement.querySelector(".brand-mark");
+const exportBrandMark = exportCardTemplate ? exportCardTemplate.querySelector(".brand-mark") : null;
 const copyCardBtn   = document.getElementById("copyCardBtn");
 const copyHint      = document.querySelector(".copy-hint");
 const copyFeedback  = document.querySelector(".copy-feedback");
@@ -79,6 +81,8 @@ function setAvatarPreviewSource(src, uploaded) {
   } else {
     avatarPreview.removeAttribute("data-uploaded-src");
   }
+
+  syncExportLayout();
 }
 
 cardElement.setAttribute("role", "button");
@@ -97,6 +101,7 @@ const descs = [
 
 descDisplay.textContent = descs[Math.floor(Math.random() * descs.length)];
 if (exportDesc) exportDesc.textContent = descDisplay.textContent;
+syncExportLayout();
 
 // --- Role to Rarity ---
 function getGrade(role) {
@@ -126,6 +131,7 @@ function update() {
   if (exportRole) exportRole.innerHTML = roleMarkup;
   if (exportRarityPill) exportRarityPill.textContent = grade;
   if (exportDesc) exportDesc.textContent = descDisplay.textContent;
+  syncExportLayout();
 }
 
 pseudoInput.addEventListener("input", update);
@@ -162,6 +168,30 @@ avatarInput.addEventListener("change", () => {
   };
   reader.readAsDataURL(file);
 });
+
+function syncExportLayout() {
+  if (!exportCardTemplate) return;
+
+  if (exportBrandMark) {
+    exportBrandMark.style.top = "-3.5rem";
+    exportBrandMark.style.left = "50%";
+    exportBrandMark.style.transform = "translateX(-50%)";
+    exportBrandMark.style.width = "5.5rem";
+    exportBrandMark.style.height = "auto";
+  }
+
+  if (exportRarityPill) {
+    exportRarityPill.style.top = "2rem";
+    exportRarityPill.style.right = "2rem";
+    exportRarityPill.style.left = "auto";
+    exportRarityPill.style.transform = "none";
+    exportRarityPill.style.padding = "0.75rem 1.5rem";
+    exportRarityPill.style.display = "inline-flex";
+    exportRarityPill.style.alignItems = "center";
+    exportRarityPill.style.justifyContent = "center";
+    exportRarityPill.style.height = "2.5rem";
+  }
+}
 
 function waitForImageLoad(img) {
   if (!img) return Promise.resolve();
@@ -202,10 +232,19 @@ async function renderCardImage() {
   if (!exportCardTemplate) throw new Error("Missing export card template");
   await ensureExportCardReady();
 
-  const previousTransform = exportRoot.style.transform;
-  const previousOpacity = exportRoot.style.opacity;
+  const previous = {
+    opacity: exportRoot.style.opacity,
+    top: exportRoot.style.top,
+    left: exportRoot.style.left,
+    pointerEvents: exportRoot.style.pointerEvents,
+    transform: exportRoot.style.transform
+  };
+
   exportRoot.style.opacity = "1";
-  exportRoot.style.transform = "translate(-9999px, -9999px)";
+  exportRoot.style.top = "-9999px";
+  exportRoot.style.left = "0";
+  exportRoot.style.pointerEvents = "none";
+  exportRoot.style.transform = "none";
 
   try {
     const canvas = await html2canvas(exportCardTemplate, {
@@ -224,13 +263,19 @@ async function renderCardImage() {
       blob,
       dataUrl,
       cleanup: () => {
-        exportRoot.style.opacity = previousOpacity;
-        exportRoot.style.transform = previousTransform;
+        exportRoot.style.opacity = previous.opacity;
+        exportRoot.style.top = previous.top;
+        exportRoot.style.left = previous.left;
+        exportRoot.style.pointerEvents = previous.pointerEvents;
+        exportRoot.style.transform = previous.transform;
       }
     };
   } catch (error) {
-    exportRoot.style.opacity = previousOpacity;
-    exportRoot.style.transform = previousTransform;
+    exportRoot.style.opacity = previous.opacity;
+    exportRoot.style.top = previous.top;
+    exportRoot.style.left = previous.left;
+    exportRoot.style.pointerEvents = previous.pointerEvents;
+    exportRoot.style.transform = previous.transform;
     throw error;
   }
 }
