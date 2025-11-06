@@ -184,7 +184,6 @@ function buildExportCard() {
   clone.removeAttribute("id");
   clone.style.transform = "none";
   clone.style.transition = "none";
-  clone.style.boxShadow = "none";
   clone.style.cursor = "default";
   clone.classList.add("export-mode");
   const exportWidth = 576;
@@ -210,11 +209,12 @@ function buildExportCard() {
     cloneAvatarInner.style.backgroundColor = innerStyles.backgroundColor;
   }
 
-  if (cloneAvatarInner && cloneAvatar) {
-    cloneAvatar.remove();
-  } else if (originalAvatar && cloneAvatar) {
+  if (originalAvatar && cloneAvatar) {
     const avatarSrc = originalAvatar.dataset.exportSrc || originalAvatar.currentSrc || originalAvatar.src;
-    if (avatarSrc) cloneAvatar.src = avatarSrc;
+    if (avatarSrc) {
+      cloneAvatar.src = avatarSrc;
+      cloneAvatar.setAttribute("loading", "eager");
+    }
     cloneAvatar.removeAttribute("srcset");
     const originalStyles = window.getComputedStyle(originalAvatar);
     cloneAvatar.style.objectFit = originalStyles.objectFit || "cover";

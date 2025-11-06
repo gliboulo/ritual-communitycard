@@ -136,9 +136,9 @@ body::after {
 }
 
 .card.export-mode {
-  width: 720px;
-  max-width: 720px;
-  min-width: 720px;
+  width: 576px;
+  max-width: 576px;
+  min-width: 576px;
   margin: 0;
 }
 
